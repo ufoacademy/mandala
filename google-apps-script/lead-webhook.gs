@@ -5,6 +5,9 @@ function doPost(e) {
   sheet.appendRow([
     new Date(data.timestamp || new Date()),
     data.name || '',
+    data.age || '',
+    data.gender || '',
+    data.email || '',
     data.contact || '',
     data.totalScore != null ? data.totalScore : '',
   ]);

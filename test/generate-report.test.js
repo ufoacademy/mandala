@@ -27,6 +27,22 @@ function makeAreaScores() {
   }));
 }
 
+function validBody(overrides = {}) {
+  return {
+    name: '홍길동',
+    age: '35',
+    gender: 'm',
+    contact: '010-1234-5678',
+    email: 'hong@example.com',
+    consent: true,
+    honeypot: '',
+    areaScores: makeAreaScores(),
+    checkupSummary: null,
+    totalScore: 160,
+    ...overrides,
+  };
+}
+
 test('rejects non-POST requests with 405', async () => {
   const handler = createHandler({
     createAnthropicClient: () => ({}),
@@ -48,10 +64,7 @@ test('rejects request with filled honeypot as 400 without calling Claude', async
     postLead: async () => {},
     sheetsWebhookUrl: null,
   });
-  const req = {
-    method: 'POST',
-    body: { name: '홍길동', contact: '010-1234-5678', honeypot: 'bot', areaScores: makeAreaScores(), totalScore: 160 },
-  };
+  const req = { method: 'POST', body: validBody({ honeypot: 'bot' }) };
   const res = mockRes();
   await handler(req, res);
   assert.equal(res.statusCode, 400);
@@ -64,14 +77,24 @@ test('rejects invalid contact as 400', async () => {
     postLead: async () => {},
     sheetsWebhookUrl: null,
   });
-  const req = {
-    method: 'POST',
-    body: { name: '홍길동', contact: 'not-a-phone', honeypot: '', areaScores: makeAreaScores(), totalScore: 160 },
-  };
+  const req = { method: 'POST', body: validBody({ contact: 'not-a-phone' }) };
   const res = mockRes();
   await handler(req, res);
   assert.equal(res.statusCode, 400);
   assert.ok(res.body.details.includes('invalid_contact'));
+});
+
+test('rejects missing consent as 400', async () => {
+  const handler = createHandler({
+    createAnthropicClient: () => ({}),
+    postLead: async () => {},
+    sheetsWebhookUrl: null,
+  });
+  const req = { method: 'POST', body: validBody({ consent: false }) };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(res.statusCode, 400);
+  assert.ok(res.body.details.includes('consent_required'));
 });
 
 test('returns generated report JSON on success', async () => {
@@ -93,17 +116,7 @@ test('returns generated report JSON on success', async () => {
     postLead: async () => {},
     sheetsWebhookUrl: null,
   });
-  const req = {
-    method: 'POST',
-    body: {
-      name: '홍길동',
-      contact: '010-1234-5678',
-      honeypot: '',
-      areaScores: makeAreaScores(),
-      checkupSummary: null,
-      totalScore: 160,
-    },
-  };
+  const req = { method: 'POST', body: validBody() };
   const res = mockRes();
   await handler(req, res);
   assert.equal(res.statusCode, 200);
@@ -133,17 +146,7 @@ test('clamps coreInsights and pairedSections to 4 items when Claude overshoots (
     postLead: async () => {},
     sheetsWebhookUrl: null,
   });
-  const req = {
-    method: 'POST',
-    body: {
-      name: '홍길동',
-      contact: '010-1234-5678',
-      honeypot: '',
-      areaScores: makeAreaScores(),
-      checkupSummary: null,
-      totalScore: 160,
-    },
-  };
+  const req = { method: 'POST', body: validBody() };
   const res = mockRes();
   await handler(req, res);
   assert.equal(res.statusCode, 200);
@@ -168,15 +171,15 @@ test('posts lead to sheets webhook when configured (best-effort, does not block 
     },
     sheetsWebhookUrl: 'https://example.com/webhook',
   });
-  const req = {
-    method: 'POST',
-    body: { name: '홍길동', contact: '010-1234-5678', honeypot: '', areaScores: makeAreaScores(), totalScore: 160 },
-  };
+  const req = { method: 'POST', body: validBody() };
   const res = mockRes();
   await handler(req, res);
   assert.equal(res.statusCode, 200);
   assert.equal(postedPayload.name, '홍길동');
   assert.equal(postedPayload.contact, '010-1234-5678');
+  assert.equal(postedPayload.email, 'hong@example.com');
+  assert.equal(postedPayload.age, '35');
+  assert.equal(postedPayload.gender, 'm');
   assert.equal(postedPayload.totalScore, 160);
 });
 
@@ -188,10 +191,7 @@ test('returns 502 when Claude call fails', async () => {
     postLead: async () => {},
     sheetsWebhookUrl: null,
   });
-  const req = {
-    method: 'POST',
-    body: { name: '홍길동', contact: '010-1234-5678', honeypot: '', areaScores: makeAreaScores(), totalScore: 160 },
-  };
+  const req = { method: 'POST', body: validBody() };
   const res = mockRes();
   await handler(req, res);
   assert.equal(res.statusCode, 502);

@@ -525,9 +525,29 @@ header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
       <input type="text" id="premiumName" placeholder="이름을 입력하세요" maxlength="20">
     </div>
     <div class="name-input-box" style="box-shadow:none;padding:0;margin-bottom:10px;">
+      <label for="premiumAge">나이</label>
+      <input type="number" id="premiumAge" placeholder="나이를 입력하세요" min="1" max="120">
+    </div>
+    <div class="name-input-box" style="box-shadow:none;padding:0;margin-bottom:10px;">
+      <label for="premiumGender">성별</label>
+      <select id="premiumGender" style="width:100%;cursor:pointer;">
+        <option value="">선택하세요</option>
+        <option value="m">남성</option>
+        <option value="f">여성</option>
+      </select>
+    </div>
+    <div class="name-input-box" style="box-shadow:none;padding:0;margin-bottom:10px;">
+      <label for="premiumEmail">이메일</label>
+      <input type="email" id="premiumEmail" placeholder="example@email.com" maxlength="60">
+    </div>
+    <div class="name-input-box" style="box-shadow:none;padding:0;margin-bottom:10px;">
       <label for="premiumContact">연락처 (휴대폰 번호)</label>
       <input type="text" id="premiumContact" placeholder="010-1234-5678" maxlength="20">
     </div>
+    <label style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-bottom:10px;cursor:pointer;">
+      <input type="checkbox" id="premiumConsent" style="margin-top:2px;flex-shrink:0;">
+      <span>건강이음센터로 개인정보 수집 및 건강정보광고를 받는 것을 수신 동의합니다.</span>
+    </label>
     <input type="text" id="premiumHoneypot" name="website" autocomplete="off" tabindex="-1" style="position:absolute;left:-9999px;">
     <div id="premiumError" style="display:none;color:#DC2626;font-size:12px;margin-bottom:8px;"></div>
     <button class="close-btn" id="premiumSubmitBtn" onclick="submitPremiumLead()">리포트 받기</button>
@@ -580,6 +600,12 @@ header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
     <!-- 진단 방식 선택 -->
     <div class="info-box" style="margin-bottom:16px;">
       <h3>🔬 진단 방식 선택</h3>
+      <div style="background:var(--green-pale);border-radius:12px;padding:12px 14px;margin:10px 0 4px;font-size:12px;line-height:1.7;color:var(--text-mid);">
+        <p><strong>📝 습관 진단 안내</strong><br>모든 문항은 <strong>최근 2주 동안</strong>의 생활습관을 기준으로 답변해주세요.</p>
+        <p style="margin-top:10px;"><strong>📋 건강검진 안내</strong><br>검사 시작 전, 최근 건강검진 결과지에서 아래 항목을 미리 확인해두시면 편리합니다.<br>
+        <strong>혈당</strong>(공복혈당·당화혈색소) · <strong>지질</strong>(중성지방·HDL·LDL·총콜레스테롤) · <strong>혈압</strong>(수축기·이완기) · <strong>체성분</strong>(BMI·허리둘레) · <strong>간기능</strong>(ALT·AST·GGT) · <strong>혈액</strong>(혈색소·MCV·RDW·호중구·림프구·hs-CRP) · <strong>신장</strong>(BUN·크레아티닌·eGFR) · <strong>기타</strong>(요산·TSH·비타민D·페리틴)<br>
+        <strong>알고 있는 항목만 입력하셔도 괜찮습니다.</strong> 모르는 항목은 비워두고 진행하세요.</p>
+      </div>
       <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
         <label style="display:flex;align-items:flex-start;gap:11px;padding:13px;border-radius:12px;border:2px solid var(--green-mid);background:var(--green-pale);cursor:pointer;">
           <input type="radio" name="mode" value="both" checked style="margin-top:3px;accent-color:var(--green-dark);">
@@ -1106,8 +1132,8 @@ const AREAS = [
         "ref": "채소·통곡물 중심 식사는 혈당 관리와 심혈관 건강에 도움",
         "refDetail": "<strong>① WHO Healthy Diet</strong><br>채소·과일을 충분히 먹고 정제 탄수화물·자유당을 줄이는 식사가 만성질환 예방의 기본입니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/healthy-diet\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Healthy Diet</a><br><br><strong>② AHA Life's Essential 8</strong><br>통곡물·채소·과일·콩류 중심의 식사 패턴은 심혈관 건강 점수를 높이는 핵심 요소입니다. <a href=\"https://www.heart.org/en/healthy-living/healthy-lifestyle/lifes-essential-8\" target=\"_blank\" rel=\"noopener noreferrer\">AHA Life's Essential 8</a>",
         "questions": [
-          "최근 2주 동안 나는 한 끼를 먹을 때 채소 반찬이나 샐러드를 함께 먹었다",
-          "최근 2주 동안 나는 흰빵·과자·달달한 빵보다 현미·잡곡·통곡물·고구마처럼 덜 정제된 탄수화물을 골랐다"
+          "한 끼를 먹을 때 채소 반찬이나 샐러드를 함께 먹었다",
+          "흰빵·과자·달달한 빵보다 현미·잡곡·통곡물·고구마처럼 덜 정제된 탄수화물을 골랐다"
         ]
       },
       {
@@ -1116,8 +1142,8 @@ const AREAS = [
         "ref": "나트륨과 첨가당을 줄이는 습관은 혈압·체중 관리에 중요",
         "refDetail": "<strong>① WHO Healthy Diet</strong><br>소금은 하루 5g 미만, 자유당은 총 에너지의 10% 미만으로 줄일 것을 권고합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/healthy-diet\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Healthy Diet</a><br><br><strong>② CDC / FDA Nutrition Facts Label</strong><br>영양성분표를 활용해 나트륨·첨가당이 많은 식품을 줄이는 것이 도움이 됩니다. <a href=\"https://www.cdc.gov/healthy-weight-growth/healthy-eating/nutrition-label.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Nutrition Label</a> · <a href=\"https://www.fda.gov/food/nutrition-facts-label/how-understand-and-use-nutrition-facts-label\" target=\"_blank\" rel=\"noopener noreferrer\">FDA Nutrition Facts</a>",
         "questions": [
-          "최근 2주 동안 나는 국물·찌개·라면을 먹을 때 국물을 적게 먹거나 남겼다",
-          "최근 2주 동안 나는 탄산음료·달달한 커피·가당 주스·에너지음료 대신 물이나 무가당 음료를 마셨다"
+          "국물·찌개·라면을 먹을 때 국물을 적게 먹거나 남겼다",
+          "탄산음료·달달한 커피·가당 주스·에너지음료 대신 물이나 무가당 음료를 마셨다"
         ]
       },
       {
@@ -1126,8 +1152,8 @@ const AREAS = [
         "ref": "규칙적이고 절제된 식사는 체중·복부비만 예방에 도움",
         "refDetail": "<strong>① CDC Chronic Disease Prevention</strong><br>건강한 식사와 체중 관리는 당뇨병·심장병·비만 예방의 핵심입니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Chronic Disease Prevention</a><br><br><strong>② AHA Life's Essential 8</strong><br>체중 관리는 식습관·활동·수면과 연결되며, 반복적인 과식·야식 습관을 줄이는 생활 조절이 중요합니다. <a href=\"https://www.heart.org/en/healthy-living/healthy-lifestyle/lifes-essential-8\" target=\"_blank\" rel=\"noopener noreferrer\">AHA Life's Essential 8</a>",
         "questions": [
-          "최근 2주 동안 나는 오후 9시 이후에는 야식이나 불필요한 군것질을 하지 않았다",
-          "최근 2주 동안 나는 배가 많이 부르기 전에 식사를 멈추거나 양을 조절했다"
+          "오후 9시 이후에는 야식이나 불필요한 군것질을 하지 않았다",
+          "배가 많이 부르기 전에 식사를 멈추거나 양을 조절했다"
         ]
       },
       {
@@ -1136,8 +1162,8 @@ const AREAS = [
         "ref": "가공식품을 줄이고 단백질·섬유질을 포함한 식사가 권장됨",
         "refDetail": "<strong>① WHO Healthy Diet</strong><br>콩류·견과류·채소·과일·통곡물을 포함하고 고지방·고당·고염 가공식품을 줄이는 식사를 권고합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/healthy-diet\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Healthy Diet</a><br><br><strong>② AHA Life's Essential 8</strong><br>생선·콩·두부·달걀·살코기 등 질 좋은 단백질과 자연식품 중심의 선택이 심혈관 건강에 유리합니다. <a href=\"https://www.heart.org/en/healthy-living/healthy-lifestyle/lifes-essential-8\" target=\"_blank\" rel=\"noopener noreferrer\">AHA Life's Essential 8</a>",
         "questions": [
-          "최근 2주 동안 나는 패스트푸드·과자·가공육·즉석식품을 먹는 횟수를 줄였다",
-          "최근 2주 동안 나는 식사할 때 달걀·두부·생선·콩·살코기 같은 단백질 식품을 함께 먹었다"
+          "패스트푸드·과자·가공육·즉석식품을 먹는 횟수를 줄였다",
+          "식사할 때 달걀·두부·생선·콩·살코기 같은 단백질 식품을 함께 먹었다"
         ]
       }
     ]
@@ -1156,8 +1182,8 @@ const AREAS = [
         "ref": "성인은 주당 150분 이상 중강도 신체활동 권장",
         "refDetail": "<strong>① WHO Physical Activity</strong><br>성인은 주당 150~300분의 중강도 또는 75~150분의 고강도 활동을 권고합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/physical-activity\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Physical Activity</a><br><br><strong>② CDC Benefits of Physical Activity</strong><br>규칙적인 유산소 운동은 심장병·제2형 당뇨·고혈압 위험을 낮춥니다. <a href=\"https://www.cdc.gov/physical-activity-basics/benefits/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Benefits of Physical Activity</a>",
         "questions": [
-          "최근 2주 동안 나는 숨이 약간 찰 정도의 걷기나 유산소 활동을 30분 안팎 했다",
-          "최근 2주 동안 나는 일주일에 여러 날로 나누어 몸을 움직이는 날을 만들었다"
+          "숨이 약간 찰 정도의 걷기나 유산소 활동을 30분 안팎 했다",
+          "일주일에 여러 날로 나누어 몸을 움직이는 날을 만들었다"
         ]
       },
       {
@@ -1166,8 +1192,8 @@ const AREAS = [
         "ref": "근력운동은 대사 건강과 기능 유지에 필요",
         "refDetail": "<strong>① WHO Physical Activity</strong><br>성인은 주 2일 이상 주요 근육군을 사용하는 근력 강화 활동을 권고합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/physical-activity\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Physical Activity</a><br><br><strong>② AHA Life's Essential 8</strong><br>유산소 활동과 함께 근력 활동을 병행할수록 전반적 심혈관 건강이 좋아집니다. <a href=\"https://www.heart.org/en/healthy-living/healthy-lifestyle/lifes-essential-8\" target=\"_blank\" rel=\"noopener noreferrer\">AHA Life's Essential 8</a>",
         "questions": [
-          "최근 2주 동안 나는 스쿼트·아령·밴드·플랭크 같은 근력운동을 했다",
-          "최근 2주 동안 나는 엘리베이터 대신 계단을 이용하거나 일부러 더 걸었다"
+          "스쿼트·아령·밴드·플랭크 같은 근력운동을 했다",
+          "엘리베이터 대신 계단을 이용하거나 일부러 더 걸었다"
         ]
       },
       {
@@ -1176,8 +1202,8 @@ const AREAS = [
         "ref": "좌식 시간을 줄이고 자주 움직이는 것이 중요",
         "refDetail": "<strong>① WHO Physical Activity</strong><br>신체활동을 늘리는 것뿐 아니라 오래 앉아 있는 시간을 줄일 것을 권장합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/physical-activity\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Physical Activity</a><br><br><strong>② CDC Benefits of Physical Activity</strong><br>짧게라도 자주 움직이는 습관은 혈당·혈압·기분 관리에 도움이 됩니다. <a href=\"https://www.cdc.gov/physical-activity-basics/benefits/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Benefits of Physical Activity</a>",
         "questions": [
-          "최근 2주 동안 나는 오래 앉아 있을 때 한 시간 안팎마다 일어나 몸을 움직였다",
-          "최근 2주 동안 나는 식사 후 10분 정도라도 걷거나 가볍게 움직였다"
+          "오래 앉아 있을 때 한 시간 안팎마다 일어나 몸을 움직였다",
+          "식사 후 10분 정도라도 걷거나 가볍게 움직였다"
         ]
       },
       {
@@ -1186,8 +1212,8 @@ const AREAS = [
         "ref": "스트레칭과 자기기록은 활동 지속에 도움",
         "refDetail": "<strong>① CDC Benefits of Physical Activity</strong><br>신체활동은 유연성·균형·근력·기분 개선에 폭넓게 도움이 됩니다. <a href=\"https://www.cdc.gov/physical-activity-basics/benefits/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Benefits of Physical Activity</a><br><br><strong>② AHA Life's Essential 8</strong><br>스스로 활동량을 확인하고 생활 속 움직임을 늘리는 것이 심혈관 건강 관리에 유익합니다. <a href=\"https://www.heart.org/en/healthy-living/healthy-lifestyle/lifes-essential-8\" target=\"_blank\" rel=\"noopener noreferrer\">AHA Life's Essential 8</a>",
         "questions": [
-          "최근 2주 동안 나는 몸이 굳지 않도록 스트레칭이나 가벼운 관절 풀기를 했다",
-          "최근 2주 동안 나는 걸음 수나 운동 여부를 앱·시계·기록표 등으로 확인했다"
+          "몸이 굳지 않도록 스트레칭이나 가벼운 관절 풀기를 했다",
+          "걸음 수나 운동 여부를 앱·시계·기록표 등으로 확인했다"
         ]
       }
     ]
@@ -1206,8 +1232,8 @@ const AREAS = [
         "ref": "성인은 대부분 매일 7시간 이상 수면이 권장됨",
         "refDetail": "<strong>① CDC Sleep</strong><br>충분한 수면은 당뇨병·심장병·비만·우울 위험을 낮추는 데 중요합니다. <a href=\"https://www.cdc.gov/sleep/about/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Sleep</a><br><br><strong>② AASM Adult Sleep Duration Health Advisory</strong><br>성인은 건강을 위해 정기적으로 7시간 이상 자는 것이 권장됩니다. <a href=\"https://aasm.org/advocacy/position-statements/adult-sleep-duration-health-advisory/\" target=\"_blank\" rel=\"noopener noreferrer\">AASM Advisory</a>",
         "questions": [
-          "최근 2주 동안 나는 하루 7시간 안팎 잠을 잤다",
-          "최근 2주 동안 나는 평일과 주말의 기상 시간을 크게 들쭉날쭉하지 않게 유지했다"
+          "하루 7시간 안팎 잠을 잤다",
+          "평일과 주말의 기상 시간을 크게 들쭉날쭉하지 않게 유지했다"
         ]
       },
       {
@@ -1216,8 +1242,8 @@ const AREAS = [
         "ref": "취침 전 화면·카페인·과식을 줄이는 것이 수면 위생에 도움",
         "refDetail": "<strong>① CDC Sleep</strong><br>규칙적 수면 습관과 취침 전 환경 조절은 수면의 질 향상에 도움이 됩니다. <a href=\"https://www.cdc.gov/sleep/about/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Sleep</a><br><br><strong>② CDC Physical Activity & Sleep</strong><br>수면은 다른 건강 행동과 연결되며, 취침 전 자극을 줄이는 생활습관이 중요합니다. <a href=\"https://www.cdc.gov/physical-activity-education/staying-healthy/sleep.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Sleep & Activity</a>",
         "questions": [
-          "최근 2주 동안 나는 잠들기 1시간 전 스마트폰·TV·태블릿 화면 사용을 줄이거나 멈췄다",
-          "최근 2주 동안 나는 늦은 저녁이나 밤에는 카페인 음료와 과식을 피했다"
+          "잠들기 1시간 전 스마트폰·TV·태블릿 화면 사용을 줄이거나 멈췄다",
+          "늦은 저녁이나 밤에는 카페인 음료와 과식을 피했다"
         ]
       },
       {
@@ -1226,8 +1252,8 @@ const AREAS = [
         "ref": "어둡고 조용한 환경과 이완 루틴은 회복에 도움",
         "refDetail": "<strong>① CDC Sleep</strong><br>침실 환경을 어둡고 조용하고 편안하게 유지하는 것이 권장됩니다. <a href=\"https://www.cdc.gov/sleep/about/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Sleep</a><br><br><strong>② CDC Emotional Well-being</strong><br>호흡·이완·마음 돌봄 같은 회복 활동은 스트레스 완화와 수면 준비에 도움이 됩니다. <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a>",
         "questions": [
-          "최근 2주 동안 나는 침실을 어둡고 조용하고 편안하게 유지했다",
-          "최근 2주 동안 나는 잠들기 전 호흡·명상·독서·가벼운 스트레칭 같은 이완 루틴을 했다"
+          "침실을 어둡고 조용하고 편안하게 유지했다",
+          "잠들기 전 호흡·명상·독서·가벼운 스트레칭 같은 이완 루틴을 했다"
         ]
       },
       {
@@ -1236,8 +1262,8 @@ const AREAS = [
         "ref": "낮 활동과 아침빛 노출은 수면 리듬 유지에 도움",
         "refDetail": "<strong>① CDC Sleep</strong><br>낮 동안의 규칙적인 활동과 수면-각성 리듬 유지가 중요합니다. <a href=\"https://www.cdc.gov/sleep/about/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Sleep</a><br><br><strong>② WHO Physical Activity</strong><br>낮의 신체활동은 건강 증진과 회복 리듬 형성에 유리합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/physical-activity\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Physical Activity</a>",
         "questions": [
-          "최근 2주 동안 나는 아침이나 낮 시간에 바깥에서 햇빛을 쬐었다",
-          "최근 2주 동안 나는 낮잠이나 늦잠 때문에 밤 수면 리듬이 흐트러지지 않게 조절했다"
+          "아침이나 낮 시간에 바깥에서 햇빛을 쬐었다",
+          "낮잠이나 늦잠 때문에 밤 수면 리듬이 흐트러지지 않게 조절했다"
         ]
       }
     ]
@@ -1256,8 +1282,8 @@ const AREAS = [
         "ref": "스트레스 신호를 알아차리고 반응을 늦추는 연습이 도움",
         "refDetail": "<strong>① CDC Living With Stress</strong><br>스트레스를 인식하고 잠시 멈추고 대처하는 습관은 정서적 건강에 중요합니다. <a href=\"https://www.cdc.gov/mental-health/living-with/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Living With Stress</a><br><br><strong>② NCCIH Stress</strong><br>만성 스트레스는 건강에 악영향을 줄 수 있어 호흡·명상·움직임 등 관리 전략이 권장됩니다. <a href=\"https://www.nccih.nih.gov/health/stress\" target=\"_blank\" rel=\"noopener noreferrer\">NCCIH Stress</a>",
         "questions": [
-          "최근 2주 동안 나는 하루 중 1~2분이라도 호흡을 가다듬거나 잠깐 멈추는 시간을 가졌다",
-          "최근 2주 동안 나는 감정이 흔들릴 때 바로 먹거나 마시기보다 잠시 멈추고 다른 행동을 했다"
+          "하루 중 1~2분이라도 호흡을 가다듬거나 잠깐 멈추는 시간을 가졌다",
+          "감정이 흔들릴 때 바로 먹거나 마시기보다 잠시 멈추고 다른 행동을 했다"
         ]
       },
       {
@@ -1266,8 +1292,8 @@ const AREAS = [
         "ref": "짧은 회복 행동도 마음 건강에 도움",
         "refDetail": "<strong>① CDC Emotional Well-being</strong><br>짧은 산책, 호흡, 감사, 휴식 같은 실천은 감정 조절과 회복감 향상에 도움을 줍니다. <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a><br><br><strong>② CDC Living With Stress</strong><br>규칙적인 휴식과 자기돌봄은 스트레스 관리 전략으로 권장됩니다. <a href=\"https://www.cdc.gov/mental-health/living-with/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Living With Stress</a>",
         "questions": [
-          "최근 2주 동안 나는 짧게라도 산책·스트레칭·명상 같은 회복 행동을 했다",
-          "최근 2주 동안 나는 바쁜 날에도 잠깐 멈춰 쉬는 시간을 만들었다"
+          "짧게라도 산책·스트레칭·명상 같은 회복 행동을 했다",
+          "바쁜 날에도 잠깐 멈춰 쉬는 시간을 만들었다"
         ]
       },
       {
@@ -1276,8 +1302,8 @@ const AREAS = [
         "ref": "정서적 지지는 스트레스 완충에 도움",
         "refDetail": "<strong>① CDC Social Connectedness</strong><br>주변과의 연결은 스트레스, 수면, 전반적 건강에 긍정적 영향을 줍니다. <a href=\"https://www.cdc.gov/social-connectedness/improving/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Social Connectedness</a><br><br><strong>② CDC Emotional Well-being</strong><br>혼자 버티기보다 믿을 수 있는 사람과 감정을 나누는 것이 권장됩니다. <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a>",
         "questions": [
-          "최근 2주 동안 나는 가족·친구·전문가와 안부를 나누거나 연락했다",
-          "최근 2주 동안 나는 내 상태나 감정을 솔직하게 나누는 대화를 했다"
+          "가족·친구·전문가와 안부를 나누거나 연락했다",
+          "내 상태나 감정을 솔직하게 나누는 대화를 했다"
         ]
       },
       {
@@ -1286,8 +1312,8 @@ const AREAS = [
         "ref": "스트레스 상황에서도 기본 건강루틴 유지가 중요",
         "refDetail": "<strong>① CDC Living With Stress</strong><br>수면·식사·운동을 무너뜨리지 않는 기본 루틴 유지가 스트레스 관리의 핵심입니다. <a href=\"https://www.cdc.gov/mental-health/living-with/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Living With Stress</a><br><br><strong>② NCCIH Stress</strong><br>스트레스 관리는 마음뿐 아니라 몸의 건강행동과 함께 다뤄야 효과적입니다. <a href=\"https://www.nccih.nih.gov/health/stress\" target=\"_blank\" rel=\"noopener noreferrer\">NCCIH Stress</a>",
         "questions": [
-          "최근 2주 동안 나는 바쁘거나 컨디션이 좋지 않아도 식사·수면·운동 루틴을 크게 무너뜨리지 않았다",
-          "최근 2주 동안 나는 감사하기·기록하기·생각 정리 같은 방식으로 마음을 정돈했다"
+          "바쁘거나 컨디션이 좋지 않아도 식사·수면·운동 루틴을 크게 무너뜨리지 않았다",
+          "감사하기·기록하기·생각 정리 같은 방식으로 마음을 정돈했다"
         ]
       }
     ]
@@ -1306,8 +1332,8 @@ const AREAS = [
         "ref": "흡연 회피와 절주는 만성질환 예방의 핵심",
         "refDetail": "<strong>① WHO Tobacco</strong><br>담배와 간접흡연 노출을 줄이는 것은 심혈관질환·암·호흡기질환 예방의 핵심입니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/tobacco\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Tobacco</a><br><br><strong>② WHO Alcohol / CDC Moderate Drinking</strong><br>알코올은 건강위험과 관련되며, 줄일수록 더 안전합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/alcohol\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Alcohol</a> · <a href=\"https://www.cdc.gov/alcohol/about-alcohol-use/moderate-alcohol-use.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Moderate Drinking</a>",
         "questions": [
-          "최근 2주 동안 나는 담배 연기나 전자담배 연기가 있는 환경을 피했다",
-          "최근 2주 동안 나는 술을 마시지 않았거나, 마셨더라도 양을 정해두고 넘기지 않았다"
+          "담배 연기나 전자담배 연기가 있는 환경을 피했다",
+          "술을 마시지 않았거나, 마셨더라도 양을 정해두고 넘기지 않았다"
         ]
       },
       {
@@ -1316,8 +1342,8 @@ const AREAS = [
         "ref": "보이는 환경이 실제 선택을 바꿈",
         "refDetail": "<strong>① CDC Chronic Disease Prevention</strong><br>건강한 식생활 환경을 만들면 좋은 선택을 더 쉽게 지속할 수 있습니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Chronic Disease Prevention</a><br><br><strong>② WHO Healthy Diet</strong><br>과일·채소·덜 가공된 식품 중심 환경이 만성질환 예방에 유리합니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/healthy-diet\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Healthy Diet</a>",
         "questions": [
-          "최근 2주 동안 나는 과일·견과류·물 같은 건강한 선택을 집이나 직장에서 눈에 잘 띄게 두었다",
-          "최근 2주 동안 나는 과자·달달한 음료·야식거리를 눈에 덜 띄는 곳에 두거나 쉽게 사지 않도록 했다"
+          "과일·견과류·물 같은 건강한 선택을 집이나 직장에서 눈에 잘 띄게 두었다",
+          "과자·달달한 음료·야식거리를 눈에 덜 띄는 곳에 두거나 쉽게 사지 않도록 했다"
         ]
       },
       {
@@ -1326,8 +1352,8 @@ const AREAS = [
         "ref": "생활환경을 바꾸면 활동량을 늘리기 쉬워짐",
         "refDetail": "<strong>① WHO Physical Activity</strong><br>활동 친화적인 환경은 신체활동 증가에 도움이 됩니다. <a href=\"https://www.who.int/news-room/fact-sheets/detail/physical-activity\" target=\"_blank\" rel=\"noopener noreferrer\">WHO Physical Activity</a><br><br><strong>② CDC Benefits of Physical Activity</strong><br>작은 환경 조정도 규칙적인 움직임을 촉진합니다. <a href=\"https://www.cdc.gov/physical-activity-basics/benefits/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Benefits of Physical Activity</a>",
         "questions": [
-          "최근 2주 동안 나는 운동화·운동복·매트 같은 도구를 바로 쓸 수 있게 두었다",
-          "최근 2주 동안 나는 계단 이용·걷기 좋은 동선 만들기 등 몸을 더 쓰게 하는 환경을 골랐다"
+          "운동화·운동복·매트 같은 도구를 바로 쓸 수 있게 두었다",
+          "계단 이용·걷기 좋은 동선 만들기 등 몸을 더 쓰게 하는 환경을 골랐다"
         ]
       },
       {
@@ -1336,8 +1362,8 @@ const AREAS = [
         "ref": "쾌적한 작업·생활 환경은 건강행동 유지에 도움",
         "refDetail": "<strong>① CDC Chronic Disease Prevention</strong><br>생활환경과 일상 습관은 만성질환 위험요인과 연결됩니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Chronic Disease Prevention</a><br><br><strong>② CDC Sleep / Well-being</strong><br>환기, 빛, 자세, 화면 노출 같은 환경 관리도 건강 루틴 유지에 영향을 줍니다. <a href=\"https://www.cdc.gov/sleep/about/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Sleep</a> · <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a>",
         "questions": [
-          "최근 2주 동안 나는 하루 한 번 이상 환기하거나 실내 공기질을 관리했다",
-          "최근 2주 동안 나는 컴퓨터·스마트폰 사용 중 자세를 바로잡거나 중간에 자세를 풀었다"
+          "하루 한 번 이상 환기하거나 실내 공기질을 관리했다",
+          "컴퓨터·스마트폰 사용 중 자세를 바로잡거나 중간에 자세를 풀었다"
         ]
       }
     ]
@@ -1356,8 +1382,8 @@ const AREAS = [
         "ref": "사회적 연결은 건강행동 지속과 만성질환 위험 감소에 도움",
         "refDetail": "<strong>① CDC Social Connectedness</strong><br>작은 연결 행동도 스트레스·수면·건강행동 유지에 긍정적 영향을 줍니다. <a href=\"https://www.cdc.gov/social-connectedness/improving/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Social Connectedness</a><br><br><strong>② CDC Social Connectedness Risk Factors</strong><br>고립과 외로움은 심장병·뇌졸중·제2형 당뇨 위험과 관련됩니다. <a href=\"https://www.cdc.gov/social-connectedness/risk-factors/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Social Connectedness Risk Factors</a>",
         "questions": [
-          "최근 2주 동안 나는 가족이나 친구에게 내 건강 목표를 알리고 응원이나 협조를 부탁했다",
-          "최근 2주 동안 나는 누군가와 함께 걷기·운동·건강한 식사 같은 건강 행동을 했다"
+          "가족이나 친구에게 내 건강 목표를 알리고 응원이나 협조를 부탁했다",
+          "누군가와 함께 걷기·운동·건강한 식사 같은 건강 행동을 했다"
         ]
       },
       {
@@ -1366,8 +1392,8 @@ const AREAS = [
         "ref": "정기 검진과 이상 소견 후속조치는 예방의 핵심",
         "refDetail": "<strong>① CDC Preventive Care</strong><br>정기 검진, 예방접종, 치과 검진, 이상 결과 확인은 만성질환 예방과 조기 발견에 중요합니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/preventive-care.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Preventive Care</a><br><br><strong>② CDC Chronic Disease Prevention</strong><br>예방적 의료 이용은 위험요인 관리에 직접 연결됩니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Chronic Disease Prevention</a>",
         "questions": [
-          "최근 2주 동안 나는 필요한 건강검진·치과검진·예방접종 일정이 있는지 확인했다",
-          "최근 2주 동안 나는 검진 결과나 몸의 이상 신호를 확인하고 필요하면 상담·진료·추가 확인을 했다"
+          "필요한 건강검진·치과검진·예방접종 일정이 있는지 확인했다",
+          "검진 결과나 몸의 이상 신호를 확인하고 필요하면 상담·진료·추가 확인을 했다"
         ]
       },
       {
@@ -1376,8 +1402,8 @@ const AREAS = [
         "ref": "건강 교육·지역 자원 활용은 실천 유지에 도움",
         "refDetail": "<strong>① CDC Social Connectedness</strong><br>지역사회 모임과 연결은 건강과 웰빙 증진에 도움이 됩니다. <a href=\"https://www.cdc.gov/social-connectedness/improving/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Social Connectedness</a><br><br><strong>② CDC Preventive Care</strong><br>신뢰할 수 있는 건강 자원과 서비스를 적극적으로 활용하는 것이 권장됩니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/preventive-care.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Preventive Care</a>",
         "questions": [
-          "최근 2주 동안 나는 건강 강좌·교육 자료·지역 프로그램·온라인 건강 자원을 찾아보거나 활용했다",
-          "최근 2주 동안 나는 내 건강문제와 관련된 전문가·기관·프로그램 정보를 찾고 실제로 연결을 시도했다"
+          "건강 강좌·교육 자료·지역 프로그램·온라인 건강 자원을 찾아보거나 활용했다",
+          "내 건강문제와 관련된 전문가·기관·프로그램 정보를 찾고 실제로 연결을 시도했다"
         ]
       },
       {
@@ -1386,8 +1412,8 @@ const AREAS = [
         "ref": "함께 확인하고 격려받는 구조가 행동 지속에 도움",
         "refDetail": "<strong>① CDC Social Connectedness</strong><br>서로 확인하고 돕는 관계는 건강 행동의 지속 가능성을 높입니다. <a href=\"https://www.cdc.gov/social-connectedness/improving/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Social Connectedness</a><br><br><strong>② CDC Emotional Well-being</strong><br>지지 관계는 감정적 회복과 행동 실천 모두에 긍정적입니다. <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a>",
         "questions": [
-          "최근 2주 동안 나는 누군가와 건강 실천 결과를 서로 확인하거나 인증했다",
-          "최근 2주 동안 나는 건강을 해치는 모임·권유·습관 대신 더 건강한 선택으로 바꾸었다"
+          "누군가와 건강 실천 결과를 서로 확인하거나 인증했다",
+          "건강을 해치는 모임·권유·습관 대신 더 건강한 선택으로 바꾸었다"
         ]
       }
     ]
@@ -1406,8 +1432,8 @@ const AREAS = [
         "ref": "영양성분표 확인은 나트륨·당·포화지방 관리에 도움",
         "refDetail": "<strong>① CDC Nutrition Facts Label</strong><br>영양성분표를 보면 나트륨·첨가당·지방을 비교해 더 건강한 선택을 할 수 있습니다. <a href=\"https://www.cdc.gov/healthy-weight-growth/healthy-eating/nutrition-label.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Nutrition Label</a><br><br><strong>② FDA Nutrition Facts</strong><br>%영양성분기준치와 1회 제공량을 함께 보는 습관이 중요합니다. <a href=\"https://www.fda.gov/food/nutrition-facts-label/how-understand-and-use-nutrition-facts-label\" target=\"_blank\" rel=\"noopener noreferrer\">FDA Nutrition Facts</a>",
         "questions": [
-          "최근 2주 동안 나는 식품을 고를 때 영양성분표에서 당·나트륨·포화지방을 확인했다",
-          "최근 2주 동안 나는 같은 식품을 비교할 때 1회 제공량과 전체 양을 함께 살펴보았다"
+          "식품을 고를 때 영양성분표에서 당·나트륨·포화지방을 확인했다",
+          "같은 식품을 비교할 때 1회 제공량과 전체 양을 함께 살펴보았다"
         ]
       },
       {
@@ -1416,8 +1442,8 @@ const AREAS = [
         "ref": "건강정보는 출처와 근거 확인이 필요",
         "refDetail": "<strong>① CDC Food Literacy Research Summary</strong><br>건강한 선택에는 정보를 이해하고 적용하는 능력이 필요합니다. <a href=\"https://www.cdc.gov/health-literacy/php/research-summaries/food-literacy.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Food Literacy</a><br><br><strong>② FDA / CDC 건강정보 자료</strong><br>광고·후기보다 공식기관, 전문가, 근거자료를 우선 확인하는 습관이 중요합니다. <a href=\"https://www.fda.gov/food/nutrition-facts-label/how-understand-and-use-nutrition-facts-label\" target=\"_blank\" rel=\"noopener noreferrer\">FDA Nutrition Facts</a> · <a href=\"https://www.cdc.gov/healthy-weight-growth/healthy-eating/nutrition-label.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Nutrition Label</a>",
         "questions": [
-          "최근 2주 동안 나는 건강정보를 볼 때 누가 만든 정보인지와 출처를 먼저 확인했다",
-          "최근 2주 동안 나는 건강기능식품·건강법을 선택할 때 광고나 후기보다 공신력 있는 자료나 전문가 의견을 먼저 찾아보았다"
+          "건강정보를 볼 때 누가 만든 정보인지와 출처를 먼저 확인했다",
+          "건강기능식품·건강법을 선택할 때 광고나 후기보다 공신력 있는 자료나 전문가 의견을 먼저 찾아보았다"
         ]
       },
       {
@@ -1426,8 +1452,8 @@ const AREAS = [
         "ref": "혈압·혈당·체중 같은 지표를 확인하는 습관이 자기관리에 도움",
         "refDetail": "<strong>① AHA Home Blood Pressure Monitoring</strong><br>가정혈압 측정과 기록은 혈압 관리에 도움이 됩니다. <a href=\"https://www.heart.org/en/health-topics/high-blood-pressure/understanding-blood-pressure-readings/monitoring-your-blood-pressure-at-home\" target=\"_blank\" rel=\"noopener noreferrer\">AHA Home BP Monitoring</a><br><br><strong>② CDC Preventive Care</strong><br>검진 결과를 확인하고 필요한 후속조치를 하는 것이 중요합니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/preventive-care.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Preventive Care</a>",
         "questions": [
-          "최근 2주 동안 나는 혈압·혈당·체중·허리둘레 같은 건강 수치를 확인했거나 최근 결과를 다시 살펴보았다",
-          "최근 2주 동안 나는 확인한 건강 수치를 앱·메모·수첩 등에 기록했다"
+          "혈압·혈당·체중·허리둘레 같은 건강 수치를 확인했거나 최근 결과를 다시 살펴보았다",
+          "확인한 건강 수치를 앱·메모·수첩 등에 기록했다"
         ]
       },
       {
@@ -1436,8 +1462,8 @@ const AREAS = [
         "ref": "구체적인 목표와 점검이 행동변화에 유리",
         "refDetail": "<strong>① CDC Chronic Disease Prevention</strong><br>만성질환 예방은 정보를 아는 것에서 끝나지 않고 식사·활동·검진 실천으로 연결되어야 합니다. <a href=\"https://www.cdc.gov/chronic-disease/prevention/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Chronic Disease Prevention</a><br><br><strong>② AHA Life's Essential 8</strong><br>자신의 건강지표를 알고 생활습관 목표를 정해 관리하는 것이 권장됩니다. <a href=\"https://www.heart.org/en/healthy-living/healthy-lifestyle/lifes-essential-8\" target=\"_blank\" rel=\"noopener noreferrer\">AHA Life's Essential 8</a>",
         "questions": [
-          "최근 2주 동안 나는 나에게 필요한 건강 목표를 하나 이상 구체적으로 정했다",
-          "최근 2주 동안 나는 건강 실천을 방해할 상황을 예상하고 미리 대처 계획을 세웠다"
+          "나에게 필요한 건강 목표를 하나 이상 구체적으로 정했다",
+          "건강 실천을 방해할 상황을 예상하고 미리 대처 계획을 세웠다"
         ]
       }
     ]
@@ -1456,8 +1482,8 @@ const AREAS = [
         "ref": "활동적인 여가는 신체·정신 건강에 도움",
         "refDetail": "<strong>① CDC Benefits of Physical Activity</strong><br>걷기·자전거·댄스 같은 활동은 몸뿐 아니라 기분과 수면에도 도움이 됩니다. <a href=\"https://www.cdc.gov/physical-activity-basics/benefits/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Benefits of Physical Activity</a><br><br><strong>② CDC Boost Brain Health</strong><br>신체활동은 뇌 건강과 스트레스 완화에도 이점이 있습니다. <a href=\"https://www.cdc.gov/physical-activity/features/boost-brain-health.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Brain Health</a>",
         "questions": [
-          "최근 2주 동안 나는 산책·등산·자전거·댄스처럼 몸을 움직이는 여가를 했다",
-          "최근 2주 동안 나는 실내에만 있기보다 바깥에서 걷거나 햇빛을 쬐는 시간을 가졌다"
+          "산책·등산·자전거·댄스처럼 몸을 움직이는 여가를 했다",
+          "실내에만 있기보다 바깥에서 걷거나 햇빛을 쬐는 시간을 가졌다"
         ]
       },
       {
@@ -1466,8 +1492,8 @@ const AREAS = [
         "ref": "스크린 중심 여가만이 아니라 회복형 활동이 필요",
         "refDetail": "<strong>① CDC Emotional Well-being</strong><br>회복을 돕는 여가와 휴식은 정서적 웰빙 향상에 도움이 됩니다. <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a><br><br><strong>② CDC Living With Stress</strong><br>스크린 외의 휴식, 이완, 취미 활동은 스트레스 관리 전략으로 권장됩니다. <a href=\"https://www.cdc.gov/mental-health/living-with/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Living With Stress</a>",
         "questions": [
-          "최근 2주 동안 나는 스마트폰·유튜브·SNS만이 아닌 독서·음악·글쓰기·공예 같은 오프라인 취미를 했다",
-          "최근 2주 동안 나는 목욕·호흡·명상·차분한 음악 듣기처럼 몸과 마음을 풀어주는 여가를 가졌다"
+          "스마트폰·유튜브·SNS만이 아닌 독서·음악·글쓰기·공예 같은 오프라인 취미를 했다",
+          "목욕·호흡·명상·차분한 음악 듣기처럼 몸과 마음을 풀어주는 여가를 가졌다"
         ]
       },
       {
@@ -1476,8 +1502,8 @@ const AREAS = [
         "ref": "함께하는 여가는 연결감과 회복감에 도움",
         "refDetail": "<strong>① CDC Social Connectedness</strong><br>사람과의 연결은 외로움 감소와 건강 증진에 도움이 됩니다. <a href=\"https://www.cdc.gov/social-connectedness/improving/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Social Connectedness</a><br><br><strong>② CDC Emotional Well-being</strong><br>즐겁고 의미 있는 관계 활동은 웰빙을 높입니다. <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a>",
         "questions": [
-          "최근 2주 동안 나는 과음 중심이 아닌 건강한 방식으로 가족·친구와 여가 시간을 보냈다",
-          "최근 2주 동안 나는 나를 즐겁게 하거나 의미 있게 만드는 사람들과의 활동 시간을 만들었다"
+          "과음 중심이 아닌 건강한 방식으로 가족·친구와 여가 시간을 보냈다",
+          "나를 즐겁게 하거나 의미 있게 만드는 사람들과의 활동 시간을 만들었다"
         ]
       },
       {
@@ -1486,8 +1512,8 @@ const AREAS = [
         "ref": "의도적으로 여가를 확보할수록 회복과 균형 유지에 도움",
         "refDetail": "<strong>① CDC Emotional Well-being</strong><br>의도적으로 쉬는 시간과 즐거운 활동을 확보하는 것이 정서적 건강에 도움이 됩니다. <a href=\"https://www.cdc.gov/emotional-well-being/improve-your-emotional-well-being/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Emotional Well-being</a><br><br><strong>② CDC Living With Stress</strong><br>바쁠수록 회복 시간을 일정에 넣는 습관이 중요합니다. <a href=\"https://www.cdc.gov/mental-health/living-with/index.html\" target=\"_blank\" rel=\"noopener noreferrer\">CDC Living With Stress</a>",
         "questions": [
-          "최근 2주 동안 나는 바쁜 날에도 나를 회복시키는 여가 시간을 일부러 확보했다",
-          "최근 2주 동안 나는 다음 주에도 이어갈 수 있는 건강한 취미나 여가 계획을 세웠다"
+          "바쁜 날에도 나를 회복시키는 여가 시간을 일부러 확보했다",
+          "다음 주에도 이어갈 수 있는 건강한 취미나 여가 계획을 세웠다"
         ]
       }
     ]
@@ -2564,12 +2590,23 @@ function collectCheckupSummaryForReport(){
 
 async function submitPremiumLead(){
   const name=document.getElementById('premiumName').value.trim();
+  const age=document.getElementById('premiumAge').value.trim();
+  const genderVal=document.getElementById('premiumGender').value;
   const contact=document.getElementById('premiumContact').value.trim();
+  const email=document.getElementById('premiumEmail').value.trim();
+  const consent=document.getElementById('premiumConsent').checked;
   const honeypot=document.getElementById('premiumHoneypot').value;
   const errEl=document.getElementById('premiumError');
   const btn=document.getElementById('premiumSubmitBtn');
 
   errEl.style.display='none';
+
+  if(!consent){
+    errEl.textContent='개인정보 수집 및 건강정보광고 수신에 동의해주세요.';
+    errEl.style.display='block';
+    return;
+  }
+
   btn.disabled=true;
   btn.textContent='리포트 생성 중...';
 
@@ -2581,7 +2618,7 @@ async function submitPremiumLead(){
     const resp=await fetch('/api/generate-report',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,contact,honeypot,areaScores,checkupSummary,totalScore})
+      body:JSON.stringify({name,age,gender:genderVal,contact,email,consent,honeypot,areaScores,checkupSummary,totalScore})
     });
     const data=await resp.json();
     if(!resp.ok){

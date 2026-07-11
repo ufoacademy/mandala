@@ -11,9 +11,9 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
     }
 
     const body = req.body || {};
-    const { name, contact, honeypot, areaScores, checkupSummary, totalScore } = body;
+    const { name, age, gender, contact, email, consent, honeypot, areaScores, checkupSummary, totalScore } = body;
 
-    const lead = validateLead({ name, contact, honeypot });
+    const lead = validateLead({ name, age, gender, contact, email, consent, honeypot });
     if (!lead.valid) {
       res.status(400).json({ error: 'invalid_input', details: lead.errors });
       return;
@@ -30,7 +30,10 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
     if (sheetsWebhookUrl) {
       postLead(sheetsWebhookUrl, {
         name: lead.name,
+        age: lead.age,
+        gender: lead.gender,
         contact: lead.contact,
+        email: lead.email,
         timestamp: new Date().toISOString(),
         totalScore: totalScore ?? null,
       }).catch((err) => {
