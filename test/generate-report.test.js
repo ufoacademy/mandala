@@ -110,6 +110,49 @@ test('returns generated report JSON on success', async () => {
   assert.deepEqual(res.body.report, fakeReport);
 });
 
+test('clamps coreInsights and pairedSections to 4 items when Claude overshoots (schema cannot enforce minItems/maxItems)', async () => {
+  const oversizedReport = {
+    greeting: '안녕하세요',
+    coreInsights: ['a', 'b', 'c', 'd', 'stray extra item'],
+    areaInterpretations: [],
+    pairedSections: [
+      { title: '1', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
+      { title: '2', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
+      { title: '3', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
+      { title: '4', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
+      { title: '5 stray', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
+    ],
+    priorityExplanation: 'x',
+    roadmap12Week: [],
+    finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: { create: async () => ({ content: [{ type: 'text', text: JSON.stringify(oversizedReport) }] }) },
+    }),
+    postLead: async () => {},
+    sheetsWebhookUrl: null,
+  });
+  const req = {
+    method: 'POST',
+    body: {
+      name: '홍길동',
+      contact: '010-1234-5678',
+      honeypot: '',
+      areaScores: makeAreaScores(),
+      checkupSummary: null,
+      totalScore: 160,
+    },
+  };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.report.coreInsights.length, 4);
+  assert.deepEqual(res.body.report.coreInsights, ['a', 'b', 'c', 'd']);
+  assert.equal(res.body.report.pairedSections.length, 4);
+  assert.equal(res.body.report.pairedSections[3].title, '4');
+});
+
 test('posts lead to sheets webhook when configured (best-effort, does not block response)', async () => {
   let postedPayload = null;
   const fakeReport = {

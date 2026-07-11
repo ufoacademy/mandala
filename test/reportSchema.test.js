@@ -22,15 +22,15 @@ test('schema requires all top-level report fields', () => {
   }
 });
 
-test('coreInsights requires exactly 4 items', () => {
-  assert.equal(REPORT_SCHEMA.properties.coreInsights.minItems, 4);
-  assert.equal(REPORT_SCHEMA.properties.coreInsights.maxItems, 4);
+test('coreInsights has no minItems/maxItems (Claude structured output does not support array length constraints; exact count of 4 is enforced via prompt instructions)', () => {
+  assert.equal(REPORT_SCHEMA.properties.coreInsights.minItems, undefined);
+  assert.equal(REPORT_SCHEMA.properties.coreInsights.maxItems, undefined);
 });
 
-test('pairedSections requires exactly 4 items with all narrative fields', () => {
+test('pairedSections has all narrative fields and no length constraints', () => {
   const paired = REPORT_SCHEMA.properties.pairedSections;
-  assert.equal(paired.minItems, 4);
-  assert.equal(paired.maxItems, 4);
+  assert.equal(paired.minItems, undefined);
+  assert.equal(paired.maxItems, undefined);
   const requiredFields = ['title', 'leftNarrative', 'rightNarrative', 'executionTranslation', 'monthlyMission'];
   for (const field of requiredFields) {
     assert.ok(paired.items.required.includes(field), `missing paired section field: ${field}`);

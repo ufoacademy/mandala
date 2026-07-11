@@ -49,6 +49,14 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
       });
       const textBlock = response.content.find((b) => b.type === 'text');
       const report = JSON.parse(textBlock.text);
+      // Claude's structured output (json_schema) doesn't support minItems/maxItems on arrays,
+      // so exact counts are prompt-instructed only — clamp defensively in case the model overshoots.
+      if (Array.isArray(report.coreInsights)) {
+        report.coreInsights = report.coreInsights.slice(0, 4);
+      }
+      if (Array.isArray(report.pairedSections)) {
+        report.pairedSections = report.pairedSections.slice(0, 4);
+      }
       res.status(200).json({ report });
     } catch (err) {
       console.error('claude request failed', err);
