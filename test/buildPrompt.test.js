@@ -56,7 +56,24 @@ test('includes checkup lines when checkupSummary has items', () => {
   assert.match(result.messages[0].content, /107/);
 });
 
+test('includes nutrition hint (supp) in checkup lines when present', () => {
+  const result = buildPrompt({
+    name: '홍길동',
+    areaScores: makeAreaScores(),
+    checkupSummary: [{ key: 'fbg', name: '공복혈당', value: 107, unit: 'mg/dL', status: 'gz', supp: '베르베린, 마그네슘, 크롬' }],
+    totalScore: 160,
+  });
+  assert.match(result.messages[0].content, /영양 힌트/);
+  assert.match(result.messages[0].content, /베르베린/);
+});
+
 test('system prompt instructs not to invent numbers', () => {
   const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
   assert.match(result.system, /숫자/);
+});
+
+test('system prompt instructs nutritionPlan to cite official evidence sources', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /evidenceSource/);
+  assert.match(result.system, /WHO/);
 });

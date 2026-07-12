@@ -2577,14 +2577,14 @@ function closePremiumModal(){
 
 function collectAreaScoresForReport(){
   return AREAS.map(a=>({
-    id:a.id, name:a.name, sub:a.sub,
+    id:a.id, name:a.name, sub:a.sub, icon:a.icon, color:a.color,
     score:getAreaScore(a.id), pctVal:pct(getAreaScore(a.id),32)
   }));
 }
 
 function collectCheckupSummaryForReport(){
   return Object.entries(checkupData).map(([key,data])=>({
-    key, name:data.bm.name, value:data.value, unit:data.bm.unit||'', status:data.status
+    key, name:data.bm.name, value:data.value, unit:data.bm.unit||'', status:data.status, supp:data.bm.supp||''
   }));
 }
 

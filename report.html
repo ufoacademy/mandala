@@ -45,6 +45,13 @@ body { font-family:'Noto Sans KR',sans-serif; color:#1B2E22; background:#F7FBF8;
 .mission-box { background:#FFF3E0; border-left:3px solid #E07B39; border-radius:8px; padding:10px 12px; font-size:12px; line-height:1.7; }
 .checkup-table { width:100%; border-collapse:collapse; font-size:12px; }
 .checkup-table th, .checkup-table td { border-bottom:1px solid #E5EDE8; padding:8px; text-align:left; }
+.radar-wrap { display:flex; justify-content:center; margin-bottom:14px; }
+.nutrition-summary { font-size:12px; line-height:1.7; color:#4A5E52; margin-bottom:14px; }
+.nutrition-card { background:#F7FBF8; border-left:3px solid #16A34A; border-radius:8px; padding:12px 14px; margin-bottom:10px; }
+.nutrition-card:last-child { margin-bottom:0; }
+.nutrition-card h4 { font-size:13px; color:#1B2E22; margin-bottom:4px; }
+.nutrition-card p { font-size:12px; line-height:1.7; color:#4A5E52; margin-bottom:6px; }
+.nutrition-card .evidence-source { font-size:11px; color:#16A34A; font-weight:700; }
 .roadmap-row { display:flex; gap:12px; margin-bottom:9px; font-size:12px; }
 .roadmap-week { width:70px; flex-shrink:0; font-weight:700; color:#2D6A4F; }
 .conclusion-box { background:#F0FAF3; }
@@ -138,6 +145,26 @@ function renderReport(data) {
     </div>`
       : '';
 
+  const np = report.nutritionPlan || {};
+  const nutritionCards = (np.recommendations || [])
+    .map(
+      (r) => `
+    <div class="nutrition-card">
+      <h4>${escapeHtml(r.title)}</h4>
+      <p>${escapeHtml(r.description)}</p>
+      <div class="evidence-source">📖 근거: ${escapeHtml(r.evidenceSource)}</div>
+    </div>`,
+    )
+    .join('');
+  const nutritionSection = np.summary
+    ? `
+    <div class="section">
+      <h2>🥗 나의 영양설계 추천</h2>
+      <p class="nutrition-summary">${escapeHtml(np.summary)}</p>
+      ${nutritionCards}
+    </div>`
+    : '';
+
   const roadmapRows = (report.roadmap12Week || [])
     .map((r) => `<div class="roadmap-row"><div class="roadmap-week">${escapeHtml(r.week)}</div><div>${escapeHtml(r.action)}</div></div>`)
     .join('');
@@ -153,6 +180,7 @@ function renderReport(data) {
     <div class="insight-grid">${insightCards}</div>
     <div class="section">
       <h2>8영역 맵</h2>
+      <div class="radar-wrap"><canvas id="radarCanvas" width="380" height="380"></canvas></div>
       ${areaBars}
     </div>
     <div class="section">
@@ -167,6 +195,7 @@ function renderReport(data) {
       <h2>8영역 우선순위</h2>
       <p style="font-size:12px;line-height:1.7;color:#4A5E52;">${escapeHtml(report.priorityExplanation || '')}</p>
     </div>
+    ${nutritionSection}
     <div class="section">
       <h2>12주 실행 로드맵</h2>
       ${roadmapRows}
@@ -179,6 +208,85 @@ function renderReport(data) {
     </div>
     <p class="footer-note">© 2026 건강이음센터. 본 리포트는 생활습관 코칭 참고용이며 의학적 진단을 대체하지 않습니다.</p>
   `;
+
+  drawRadar(areaScores || []);
+}
+
+function drawRadar(areaScores){
+  const canvas=document.getElementById('radarCanvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const cx=W/2, cy=H/2, r=Math.min(W,H)/2-40;
+  const n=8;
+  const angles=Array.from({length:n},(_,i)=>((2*Math.PI/n)*i)-Math.PI/2);
+
+  ctx.clearRect(0,0,W,H);
+
+  for(let level=1;level<=4;level++){
+    ctx.beginPath();
+    angles.forEach((angle,i)=>{
+      const x=cx+Math.cos(angle)*(r*(level/4));
+      const y=cy+Math.sin(angle)*(r*(level/4));
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle=`rgba(45,106,79,${0.1+level*0.05})`;
+    ctx.lineWidth=1;
+    ctx.stroke();
+    ctx.fillStyle='rgba(240,250,243,0.3)';
+    ctx.fill();
+  }
+
+  angles.forEach(angle=>{
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(angle)*r, cy+Math.sin(angle)*r);
+    ctx.strokeStyle='rgba(45,106,79,0.2)';
+    ctx.lineWidth=1;
+    ctx.stroke();
+  });
+
+  ctx.beginPath();
+  areaScores.forEach((a,i)=>{
+    const ratio=a.score/32;
+    const x=cx+Math.cos(angles[i])*r*ratio;
+    const y=cy+Math.sin(angles[i])*r*ratio;
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(82,183,136,0.3)';
+  ctx.fill();
+  ctx.strokeStyle='rgba(45,106,79,0.9)';
+  ctx.lineWidth=2.5;
+  ctx.stroke();
+
+  areaScores.forEach((a,i)=>{
+    const ratio=a.score/32;
+    const x=cx+Math.cos(angles[i])*r*ratio;
+    const y=cy+Math.sin(angles[i])*r*ratio;
+    ctx.beginPath();
+    ctx.arc(x,y,5,0,2*Math.PI);
+    ctx.fillStyle=a.color||'#2D6A4F';
+    ctx.fill();
+    ctx.strokeStyle='#fff';
+    ctx.lineWidth=2;
+    ctx.stroke();
+  });
+
+  ctx.font='bold 12px "Noto Sans KR", sans-serif';
+  ctx.textAlign='center';
+  ctx.textBaseline='middle';
+  areaScores.forEach((a,i)=>{
+    const lx=cx+Math.cos(angles[i])*(r+26);
+    const ly=cy+Math.sin(angles[i])*(r+26);
+    ctx.fillStyle=a.color||'#2D6A4F';
+    ctx.fillText(`${a.icon||''}${a.name}`,lx,ly-5);
+    ctx.fillStyle='#8AA693';
+    ctx.font='10px "Noto Sans KR"';
+    ctx.fillText(`${a.pctVal}%`,lx,ly+8);
+    ctx.font='bold 12px "Noto Sans KR", sans-serif';
+  });
 }
 
 (function init() {

@@ -60,6 +60,9 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
       if (Array.isArray(report.pairedSections)) {
         report.pairedSections = report.pairedSections.slice(0, 4);
       }
+      if (report.nutritionPlan && Array.isArray(report.nutritionPlan.recommendations)) {
+        report.nutritionPlan.recommendations = report.nutritionPlan.recommendations.slice(0, 5);
+      }
       res.status(200).json({ report });
     } catch (err) {
       console.error('claude request failed', err);
