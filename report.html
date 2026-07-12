@@ -173,6 +173,7 @@ function renderReport(data) {
 
   root.innerHTML = `
     <div class="hero">
+      <div style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:20px;padding:6px 14px;font-size:11px;font-weight:700;margin-bottom:10px;">🎁 진단가 100,000원 상당의 프리미엄 통합분석을 무료로 제공합니다</div>
       <h1>${escapeHtml(name || '고객')}님, 건강만다라로 몸의 패턴을 읽었습니다</h1>
       <p class="greeting">${escapeHtml(report.greeting || '')}</p>
       <p class="total">건강만다라 총점 ${escapeHtml(totalScore)}/256</p>
