@@ -64,6 +64,15 @@ header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
 .info-box h3{font-size:14px;color:var(--green-dark);font-weight:700;margin-bottom:12px;}
 .info-box .focus-text{font-size:13px;color:var(--text-mid);line-height:1.7;margin-bottom:12px;}
 
+.founder-story-box{margin-bottom:16px;}
+.founder-story-toggle{display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:4px 0;}
+.founder-story-toggle h3{margin:0;}
+.founder-story-arrow{font-size:12px;color:var(--text-mid);transition:transform .2s;}
+.founder-story-arrow.open{transform:rotate(180deg);}
+.founder-story-content{display:none;margin-top:12px;font-size:12px;line-height:1.8;color:var(--text-mid);}
+.founder-story-content.show{display:block;}
+.founder-quote{background:var(--green-pale);border-left:3px solid var(--green-dark);border-radius:8px;padding:10px 14px;margin:10px 0;font-weight:700;color:var(--green-dark);font-size:12.5px;}
+
 .score-legend{display:flex;gap:6px;flex-wrap:wrap;}
 .score-badge{flex:1;min-width:100px;padding:10px 8px;border-radius:10px;text-align:center;font-size:11px;}
 .score-badge .num{font-size:20px;font-weight:900;}
@@ -594,6 +603,23 @@ header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
         <div class="score-badge s2"><div class="num">2점</div>가끔 실천함<br><small>26~50%</small></div>
         <div class="score-badge s3"><div class="num">3점</div>자주 실천함<br><small>51~75%</small></div>
         <div class="score-badge s4"><div class="num">4점</div>꾸준히 실천함<br><small>76~100%</small></div>
+      </div>
+    </div>
+
+    <!-- 대표자 스토리 -->
+    <div class="info-box founder-story-box">
+      <div class="founder-story-toggle" onclick="toggleFounderStory()">
+        <h3>👩‍⚕️ 왜 건강만다라를 만들었나</h3>
+        <span class="founder-story-arrow" id="founderArrow">▼</span>
+      </div>
+      <div class="founder-story-content" id="founderContent">
+        <p>23년차 질병예방전문가로 16년을 학교보건실이라는 제도권 안에서 건강사업을 해왔습니다. 하지만 결국 건강 문제는 가정에서부터 시작된다는 것을 알게 되어, 지난 7년간 제도권 밖 현장에서 수백 명을 직접 만나왔습니다.</p>
+        <p style="margin-top:10px;">그 과정에서 깨달은 것은 하나입니다. 정보는 넘쳐나지만, 정작 내가 무엇을 어떻게 해야 할지 아는 사람은 드물다는 것입니다. 한 영역만 파고드는 것이 아니라, 건강이음 8영역으로 균형 있게 설계해야 한다는 확신으로 이 진단을 만들었습니다.</p>
+        <div class="founder-quote">"건강은 정보를 더 많이 아는 사람이 아니라, 무너지는 신호를 끝까지 외면하지 않는 사람이 지킵니다."</div>
+        <div class="founder-quote">"몸은 어느 날 갑자기 무너지지 않습니다."</div>
+        <div class="founder-quote">"가장 약한 한 칸에서 먼저 새기 시작합니다."</div>
+        <div class="founder-quote">"건강은 지식이 아니라 태도입니다."</div>
+        <p style="margin-top:10px;">이 진단이 여러분의 건강한 삶에 작은 시작이 되기를 바랍니다.</p>
       </div>
     </div>
 
@@ -2401,6 +2427,13 @@ function toggleEvidence(){
   const content=document.getElementById('ev-content');
   toggle.classList.toggle('open');
   content.classList.toggle('show');
+}
+
+function toggleFounderStory(){
+  const content=document.getElementById('founderContent');
+  const arrow=document.getElementById('founderArrow');
+  content.classList.toggle('show');
+  arrow.classList.toggle('open');
 }
 
 function updateName(){
