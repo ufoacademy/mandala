@@ -77,3 +77,10 @@ test('system prompt instructs nutritionPlan to cite official evidence sources', 
   assert.match(result.system, /evidenceSource/);
   assert.match(result.system, /WHO/);
 });
+
+test('system prompt instructs evidence-based, motivation-driven tone across all sections', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /오늘|이번 주/);
+  assert.match(result.system, /동기부여/);
+  assert.match(result.system, /finalConclusion/);
+});
