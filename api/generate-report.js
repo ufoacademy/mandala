@@ -45,7 +45,7 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
       const client = createAnthropicClient();
       const response = await client.messages.create({
         model: 'claude-sonnet-5',
-        max_tokens: 8000,
+        max_tokens: 16000,
         system: prompt.system,
         messages: prompt.messages,
         output_config: { format: { type: 'json_schema', schema: REPORT_SCHEMA } },

@@ -666,7 +666,7 @@ header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
         <div class="qc-icon">💬</div>
         <div class="qc-text">
           <span>Personalized</span>
-          <strong>1:1 건강프로그램 상담</strong>
+          <strong>1:1 건강기능식품·프로그램 상담</strong>
         </div>
         <div class="qc-arrow">›</div>
       </a>
@@ -1083,8 +1083,8 @@ header h1{font-family:'Noto Serif KR',serif;font-size:20px;font-weight:700;}
           <div class="cta-icon">💬</div>
           <div class="cta-text">
             <div class="cta-tag">Personalized</div>
-            <h4>1:1 건강프로그램 상담</h4>
-            <p>다이어트 · 대사증후군 · 면역관리 · 맞춤 건강 계획 수립</p>
+            <h4>1:1 건강기능식품·프로그램 상담</h4>
+            <p>건강기능식품 추천 · 다이어트 · 대사증후군 · 맞춤 건강 프로그램</p>
           </div>
           <div class="cta-arrow">›</div>
         </a>
@@ -2611,10 +2611,14 @@ function closePremiumModal(){
 }
 
 function collectAreaScoresForReport(){
-  return AREAS.map(a=>({
-    id:a.id, name:a.name, sub:a.sub, icon:a.icon, color:a.color,
-    score:getAreaScore(a.id), pctVal:pct(getAreaScore(a.id),32)
-  }));
+  return AREAS.map(a=>{
+    const lowest=getLowestDimension(a);
+    return {
+      id:a.id, name:a.name, sub:a.sub, icon:a.icon, color:a.color,
+      score:getAreaScore(a.id), pctVal:pct(getAreaScore(a.id),32),
+      weakestDim:{letter:lowest.letter, name:lowest.name, pctVal:lowest.pctVal}
+    };
+  });
 }
 
 function collectCheckupSummaryForReport(){

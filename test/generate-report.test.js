@@ -123,6 +123,30 @@ test('returns generated report JSON on success', async () => {
   assert.deepEqual(res.body.report, fakeReport);
 });
 
+test('requests enough max_tokens headroom for thinking + full report (regression: 8000 truncated real responses)', async () => {
+  const fakeReport = {
+    greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
+    priorityExplanation: 'x', roadmap12Week: [], finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  let capturedParams = null;
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: {
+        create: async (params) => {
+          capturedParams = params;
+          return { content: [{ type: 'text', text: JSON.stringify(fakeReport) }] };
+        },
+      },
+    }),
+    postLead: async () => {},
+    sheetsWebhookUrl: null,
+  });
+  const req = { method: 'POST', body: validBody() };
+  const res = mockRes();
+  await handler(req, res);
+  assert.ok(capturedParams.max_tokens >= 16000, `max_tokens too low: ${capturedParams.max_tokens}`);
+});
+
 test('clamps coreInsights and pairedSections to 4 items when Claude overshoots (schema cannot enforce minItems/maxItems)', async () => {
   const oversizedReport = {
     greeting: '안녕하세요',

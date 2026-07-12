@@ -84,3 +84,23 @@ test('system prompt instructs evidence-based, motivation-driven tone across all 
   assert.match(result.system, /동기부여/);
   assert.match(result.system, /finalConclusion/);
 });
+
+test('includes weakest sub-dimension per area when provided', () => {
+  const areaScores = makeAreaScores();
+  areaScores[0].weakestDim = { letter: 'A', name: '혈당을 덜 흔드는 식사', pctVal: 50 };
+  const result = buildPrompt({ name: '홍길동', areaScores, totalScore: 160 });
+  assert.match(result.messages[0].content, /가장 약한 세부항목/);
+  assert.match(result.messages[0].content, /혈당을 덜 흔드는 식사/);
+});
+
+test('omits weakest sub-dimension text when not provided (backward compatible)', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.doesNotMatch(result.messages[0].content, /가장 약한 세부항목/);
+});
+
+test('system prompt instructs mapping weak sub-dimensions to specific nutrients', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /가장 약한 세부항목/);
+  assert.match(result.system, /식이섬유/);
+  assert.match(result.system, /마그네슘/);
+});
