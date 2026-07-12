@@ -2458,7 +2458,7 @@ function initKakao(){
 function shareKakao(){
   const url = window.location.href;
   const title = '🌿 건강만다라 만성질환 예방 진단';
-  const desc = '당뇨·고혈압·비만을 유발하는 내 삶의 최약점을 찾아드립니다 | 8영역 64문항';
+  const desc = '10만원 상당의 정밀분석을 무료로! 당뇨·고혈압·비만을 유발하는 내 삶의 최약점을 찾아드립니다 | 8영역 64문항';
   // 카카오 SDK 미설정 시 링크 공유로 대체
   if(window.Kakao && Kakao.isInitialized()){
     Kakao.Share.sendDefault({
@@ -2488,7 +2488,7 @@ function copyLink(){
   const url = window.location.href;
   if(navigator.clipboard){
     navigator.clipboard.writeText(url).then(()=>{
-      showToast('🔗 링크가 복사되었어요! 카카오톡에 붙여넣기 하세요.');
+      showToast('🔗 무료 프리미엄 진단 링크가 복사되었어요! 카카오톡에 붙여넣기 하세요.');
     });
   } else {
     const ta = document.createElement('textarea');
@@ -2497,7 +2497,7 @@ function copyLink(){
     ta.select();
     document.execCommand('copy');
     document.body.removeChild(ta);
-    showToast('🔗 링크가 복사되었어요! 카카오톡에 붙여넣기 하세요.');
+    showToast('🔗 무료 프리미엄 진단 링크가 복사되었어요! 카카오톡에 붙여넣기 하세요.');
   }
 }
 
