@@ -6,67 +6,124 @@
 <title>건강만다라 | 프리미엄 통합분석 리포트</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-@page { size: A4; margin: 15mm; }
+:root{
+  --navy:#1B2A47; --navy-dark:#101B30; --gold:#C9A227;
+  --bg:#F5F7FA; --ink:#1B2230; --ink-mid:#4A5568; --ink-light:#8A94A6;
+  --border:#E3E8F0; --insight-bg:#EEF4F1; --insight-border:#2E7D5B;
+  --highlight-bg:#FBF3E3; --highlight-border:#D97706;
+}
+@page { size: A4; margin: 12mm; }
 * { margin:0; padding:0; box-sizing:border-box; }
-body { font-family:'Noto Sans KR',sans-serif; color:#1B2E22; background:#F7FBF8; }
-.page { max-width:800px; margin:0 auto; padding:24px 20px 60px; }
-.toolbar { position:sticky; top:0; background:#2D6A4F; color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; z-index:10; }
+body { font-family:'Noto Sans KR',sans-serif; color:var(--ink); background:var(--bg); }
+.toolbar { position:sticky; top:0; background:var(--navy); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; z-index:10; }
 .toolbar span { font-weight:700; font-size:14px; }
-.toolbar button { background:#fff; color:#2D6A4F; border:none; border-radius:8px; padding:10px 18px; font-weight:700; cursor:pointer; font-size:13px; }
+.toolbar button { background:var(--gold); color:var(--navy-dark); border:none; border-radius:8px; padding:10px 18px; font-weight:700; cursor:pointer; font-size:13px; }
+.report-root { max-width:800px; margin:0 auto; padding:20px 16px 60px; }
+.report-page { background:#fff; border-radius:10px; box-shadow:0 2px 16px rgba(16,27,48,.08); overflow:hidden; margin-bottom:22px; }
+.page-header { background:var(--navy); color:#fff; padding:20px 26px 14px; }
+.page-header-top { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+.chapter-num { font-size:11px; font-weight:700; color:var(--gold); letter-spacing:.06em; margin-bottom:3px; }
+.page-header h1 { font-size:18px; font-weight:900; line-height:1.35; }
+.page-header .chapter-sub { font-size:11px; color:rgba(255,255,255,.65); margin-top:4px; }
+.page-number { font-size:12px; font-weight:700; color:rgba(255,255,255,.55); flex-shrink:0; }
+.gold-rule { height:3px; background:linear-gradient(90deg,var(--gold),rgba(201,162,39,.15)); margin-top:12px; }
+.page-body { padding:20px 26px 16px; }
+.page-footer { font-size:9.5px; color:var(--ink-light); text-align:center; padding:10px 20px 16px; border-top:1px solid var(--border); }
 @media print {
   .no-print { display:none !important; }
   body { background:#fff; }
-  .page { max-width:none; padding:0; }
-  .hero, .insight-card, .area-interp, .paired-section, .nutrition-card, .roadmap-row { page-break-inside:avoid; }
-  .section h2 { page-break-after:avoid; }
-  .page-break-before { page-break-before:always; break-before:page; }
+  .report-root { max-width:none; padding:0; }
+  .report-page { box-shadow:none; border-radius:0; margin:0; page-break-after:always; }
+  .report-page:last-child { page-break-after:auto; }
 }
-.hero { background:linear-gradient(135deg,#2D6A4F,#1A4731); color:#fff; border-radius:16px; padding:18px 20px; margin-bottom:12px; }
-.hero h1 { font-size:17px; line-height:1.4; margin-bottom:6px; }
-.hero .greeting { font-size:11.5px; opacity:.9; line-height:1.55; }
-.hero .total { font-size:11.5px; opacity:.8; margin-top:8px; }
-.insight-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
-.insight-card { background:#F0FAF3; border-left:3px solid #52B788; border-radius:10px; padding:10px; font-size:11px; line-height:1.5; }
-.section { background:#fff; border-radius:14px; padding:16px; margin-bottom:12px; box-shadow:0 2px 12px rgba(0,0,0,.06); }
-.section h2 { font-size:15px; color:#2D6A4F; margin-bottom:10px; border-bottom:2px solid #D8F3DC; padding-bottom:6px; }
-.area-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:5px; font-size:11px; }
-.area-bar-label { width:110px; flex-shrink:0; }
-.area-bar-track { flex:1; background:#F0F4F1; border-radius:4px; height:8px; overflow:hidden; }
-.area-bar-fill { height:100%; background:#52B788; }
-.area-bar-pct { width:40px; text-align:right; flex-shrink:0; color:#4A5E52; }
-.area-interp { margin-bottom:12px; }
-.area-interp strong { font-size:13px; color:#1B2E22; }
-.area-interp p { font-size:12px; line-height:1.7; margin-top:4px; color:#4A5E52; }
-.paired-section { margin-bottom:20px; }
-.paired-section:last-child { margin-bottom:0; }
-.paired-section h3 { font-size:14px; color:#2D6A4F; margin-bottom:8px; }
-.paired-cols { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:10px; }
-.paired-cols div { font-size:12px; line-height:1.7; background:#F7FBF8; border-radius:8px; padding:10px; }
-.exec-translation { font-size:12px; line-height:1.7; margin-bottom:8px; }
-.exec-translation strong { color:#2D6A4F; }
-.mission-box { background:#FFF3E0; border-left:3px solid #E07B39; border-radius:8px; padding:10px 12px; font-size:12px; line-height:1.7; }
-.checkup-table { width:100%; border-collapse:collapse; font-size:12px; }
-.checkup-table th, .checkup-table td { border-bottom:1px solid #E5EDE8; padding:8px; text-align:left; }
-.radar-wrap { display:flex; justify-content:center; margin-bottom:8px; }
-.nutrition-summary { font-size:12px; line-height:1.7; color:#4A5E52; margin-bottom:14px; }
-.nutrition-card { background:#F7FBF8; border-left:3px solid #16A34A; border-radius:8px; padding:12px 14px; margin-bottom:10px; }
+
+/* 표지 */
+.cover-hero { background:linear-gradient(135deg,var(--navy),var(--navy-dark)); color:#fff; padding:26px 26px 22px; }
+.cover-hero .badge { display:inline-block; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.25); border-radius:16px; padding:5px 12px; font-size:10px; font-weight:700; margin-bottom:10px; }
+.cover-hero h1 { font-size:21px; line-height:1.4; margin-bottom:8px; }
+.cover-hero .sub { font-size:11.5px; color:rgba(255,255,255,.6); margin-bottom:14px; }
+.cover-hero p.greeting { font-size:12px; line-height:1.8; opacity:.92; }
+.subject-card { background:var(--bg); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin:18px 26px 0; }
+.subject-row { display:flex; flex-wrap:wrap; gap:6px 20px; font-size:11.5px; color:var(--ink-mid); }
+.subject-row strong { color:var(--ink); }
+.insight-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:18px 26px 0; }
+.insight-card { background:var(--insight-bg); border-left:3px solid var(--insight-border); border-radius:8px; padding:12px 14px; font-size:11px; line-height:1.6; }
+.positioning-box { margin:18px 26px 20px; background:var(--highlight-bg); border:1px solid #F0DDB0; border-radius:10px; padding:14px 16px; }
+.positioning-box h3 { font-size:12px; color:#92650A; margin-bottom:6px; }
+.positioning-box p { font-size:11px; line-height:1.7; color:#5C3D07; }
+
+/* 대시보드 */
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
+.stat-card { background:var(--bg); border-radius:8px; padding:12px 14px; }
+.stat-card .label { font-size:10.5px; color:var(--ink-light); margin-bottom:3px; }
+.stat-card .value { font-size:19px; font-weight:900; color:var(--navy); }
+.stat-card .interp { font-size:10.5px; color:var(--ink-mid); margin-top:2px; }
+.summary-table { width:100%; border-collapse:collapse; font-size:11.5px; }
+.summary-table th { background:var(--bg); text-align:left; padding:8px 10px; color:var(--ink-mid); font-weight:700; }
+.summary-table td { padding:8px 10px; border-bottom:1px solid var(--border); }
+
+/* 8영역 맵 */
+.radar-wrap { display:flex; justify-content:center; margin-bottom:14px; }
+.area-bar-row { display:flex; align-items:center; gap:8px; font-size:11px; margin-bottom:6px; }
+.area-bar-label { width:60px; flex-shrink:0; }
+.area-bar-track { flex:1; background:var(--bg); border-radius:4px; height:8px; overflow:hidden; }
+.area-bar-fill { height:100%; background:var(--navy); }
+.area-bar-pct { width:36px; text-align:right; flex-shrink:0; color:var(--ink-mid); }
+.area-interp-list { margin-top:16px; }
+.area-interp-list li { list-style:none; font-size:11.5px; line-height:1.7; margin-bottom:9px; color:var(--ink-mid); }
+.area-interp-list strong { color:var(--navy); }
+
+/* 페어 섹션 */
+.pair-cards { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+.pair-card { background:var(--bg); border-radius:8px; padding:12px 14px; }
+.pair-card h4 { font-size:12px; color:var(--navy); margin-bottom:6px; }
+.pair-card p { font-size:11.5px; line-height:1.7; color:var(--ink-mid); }
+.middle-box { background:#fff; border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin-bottom:14px; }
+.middle-box h4 { font-size:12px; color:var(--navy); margin-bottom:6px; }
+.middle-box p { font-size:11.5px; line-height:1.7; color:var(--ink-mid); }
+.highlight-box { background:var(--highlight-bg); border-left:3px solid var(--highlight-border); border-radius:8px; padding:12px 14px; }
+.highlight-box h4 { font-size:12px; color:#92650A; margin-bottom:6px; }
+.highlight-box ul { padding-left:16px; }
+.highlight-box li { font-size:11.5px; line-height:1.7; color:#5C3D07; margin-bottom:3px; }
+
+/* 목표치 설계 */
+.target-table { width:100%; border-collapse:collapse; font-size:11.5px; margin-bottom:16px; }
+.target-table th { background:var(--bg); padding:8px 10px; text-align:left; color:var(--ink-mid); }
+.target-table td { padding:8px 10px; border-bottom:1px solid var(--border); }
+.priority-box { background:var(--insight-bg); border-radius:8px; padding:14px 16px; margin-bottom:14px; font-size:11.5px; line-height:1.7; color:var(--ink-mid); }
+.hope-box { background:var(--highlight-bg); border-radius:8px; padding:14px 16px; font-size:11.5px; line-height:1.7; color:#5C3D07; }
+
+/* 영양설계 */
+.nutrition-summary { font-size:11.5px; line-height:1.7; color:var(--ink-mid); margin-bottom:14px; }
+.nutrition-card { background:var(--bg); border-left:3px solid var(--insight-border); border-radius:8px; padding:12px 14px; margin-bottom:10px; }
 .nutrition-card:last-child { margin-bottom:0; }
-.nutrition-card h4 { font-size:13px; color:#1B2E22; margin-bottom:4px; }
-.nutrition-card p { font-size:12px; line-height:1.7; color:#4A5E52; margin-bottom:6px; }
-.nutrition-card .evidence-source { font-size:11px; color:#16A34A; font-weight:700; }
-.roadmap-row { display:flex; gap:12px; margin-bottom:9px; font-size:12px; }
-.roadmap-week { width:70px; flex-shrink:0; font-weight:700; color:#2D6A4F; }
-.conclusion-box { background:#F0FAF3; }
-.conclusion-box p { font-size:12px; line-height:1.8; margin-bottom:10px; }
-.conclusion-box p:last-child { margin-bottom:0; }
-.footer-note { text-align:center; font-size:10px; color:#8AA693; margin-top:20px; }
+.nutrition-card h4 { font-size:12.5px; color:var(--ink); margin-bottom:4px; }
+.nutrition-card p { font-size:11.5px; line-height:1.7; color:var(--ink-mid); margin-bottom:6px; }
+.nutrition-card .evidence-source { font-size:10.5px; color:var(--insight-border); font-weight:700; }
+
+/* 로드맵 */
+.roadmap-row { display:flex; gap:10px; margin-bottom:8px; font-size:11.5px; }
+.roadmap-week { width:60px; flex-shrink:0; font-weight:700; color:var(--navy); }
+.messaging-box { background:var(--highlight-bg); border-radius:8px; padding:14px 16px; margin-top:16px; }
+.messaging-box h4 { font-size:12px; color:#92650A; margin-bottom:8px; }
+.messaging-box ul { padding-left:16px; }
+.messaging-box li { font-size:11.5px; line-height:1.8; color:#5C3D07; }
+
+/* 최종 결론 */
+.conclusion-block { background:var(--bg); border-radius:8px; padding:14px 16px; margin-bottom:12px; }
+.conclusion-block:last-child { margin-bottom:0; }
+.conclusion-block h4 { font-size:12.5px; color:var(--navy); margin-bottom:6px; }
+.conclusion-block p { font-size:12px; line-height:1.75; color:var(--ink-mid); }
+.conclusion-block ol { padding-left:18px; margin-top:6px; }
+.conclusion-block ol li { font-size:12px; line-height:1.8; color:var(--ink-mid); margin-bottom:4px; }
+
 .error-box { text-align:center; padding:80px 20px; }
 .error-box h2 { font-size:18px; margin-bottom:10px; }
-.error-box a { color:#2D6A4F; font-weight:700; text-decoration:underline; }
+.error-box a { color:var(--navy); font-weight:700; text-decoration:underline; }
 .inapp-banner { display:none; background:#FFF3E0; border-bottom:2px solid #E07B39; padding:12px 20px; font-size:12.5px; line-height:1.7; color:#7A4A1E; }
 .inapp-banner.show { display:block; }
 .inapp-banner strong { color:#B94A00; }
-.inapp-banner button { margin-top:8px; background:#2D6A4F; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:700; font-size:12px; cursor:pointer; }
+.inapp-banner button { margin-top:8px; background:var(--navy); color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:700; font-size:12px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -76,10 +133,10 @@ body { font-family:'Noto Sans KR',sans-serif; color:#1B2E22; background:#F7FBF8;
   <button onclick="copyReportLink()" id="copyLinkBtn">🔗 이 링크 복사하기</button>
 </div>
 <div class="toolbar no-print">
-  <span>🌿 건강만다라 프리미엄 리포트</span>
+  <span>📘 건강만다라 프리미엄 리포트</span>
   <button onclick="handlePrintClick()">🖨️ 인쇄 / PDF로 저장</button>
 </div>
-<div class="page" id="reportRoot"></div>
+<div class="report-root" id="reportRoot"></div>
 
 <script>
 function isInAppBrowser() {
@@ -118,217 +175,341 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function linesToListItems(str) {
+  return (str || '')
+    .split('\n')
+    .map((s) => s.trim())
+    .filter(Boolean)
+    .map((s) => `<li>${escapeHtml(s)}</li>`)
+    .join('');
+}
+
 function renderError() {
   document.getElementById('reportRoot').innerHTML = `
     <div class="error-box">
       <h2>리포트 정보를 찾을 수 없습니다</h2>
-      <p style="margin-top:10px;color:#4A5E52;">진단을 먼저 완료한 뒤 프리미엄 리포트를 요청해주세요.</p>
+      <p style="margin-top:10px;color:var(--ink-mid);">진단을 먼저 완료한 뒤 프리미엄 리포트를 요청해주세요.</p>
       <p style="margin-top:16px;"><a href="index.html">진단 페이지로 돌아가기</a></p>
     </div>`;
 }
 
-function renderReport(data) {
-  const { report, name, areaScores, checkupSummary, totalScore } = data;
-  const root = document.getElementById('reportRoot');
+const PAIR_META = [
+  { label: '식 & 동', subtitle: '혈당·체중·활동 설계' },
+  { label: '휴 & 심', subtitle: '수면 회복과 정서 조절' },
+  { label: '환 & 연', subtitle: '환경과 지지망 재설계' },
+  { label: '지 & 락', subtitle: '정보 리터러시와 건강 여가' },
+];
 
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+const FOOTER_HTML = '<footer class="page-footer">© 2026 건강이음센터. 본 리포트는 생활습관 코칭 참고용이며 의학적 진단을 대체하지 않습니다. (저작권등록번호 C-2026-026168) · 기업·기관 사용 문의: ufoacademy@naver.com</footer>';
+
+function wrapPage(chapterIndex, pageNumber, title, subtitle, bodyHtml) {
+  return `
+  <section class="report-page">
+    <header class="page-header">
+      <div class="page-header-top">
+        <div>
+          <div class="chapter-num">${pad2(chapterIndex)}.</div>
+          <h1>${escapeHtml(title)}</h1>
+          <p class="chapter-sub">${escapeHtml(subtitle)}</p>
+        </div>
+        <div class="page-number">${pageNumber}</div>
+      </div>
+      <div class="gold-rule"></div>
+    </header>
+    <div class="page-body">${bodyHtml}</div>
+    ${FOOTER_HTML}
+  </section>`;
+}
+
+function renderCoverPage(data, pageNumber) {
+  const { report, name, age, gender, checkupSummary, totalScore } = data;
   const insightCards = (report.coreInsights || [])
     .map((t) => `<div class="insight-card">${escapeHtml(t)}</div>`)
     .join('');
 
+  const subjectParts = [`<strong>${escapeHtml(name || '고객')}님</strong>`];
+  if (age) subjectParts.push(`${escapeHtml(age)}세`);
+  if (gender) subjectParts.push(gender === 'f' ? '여성' : '남성');
+  const bmiEntry = (checkupSummary || []).find((c) => c.key === 'bmi');
+  const waistEntry = (checkupSummary || []).find((c) => c.key === 'waist');
+  if (bmiEntry) subjectParts.push(`BMI ${escapeHtml(bmiEntry.value)}`);
+  if (waistEntry) subjectParts.push(`허리둘레 ${escapeHtml(waistEntry.value)}cm`);
+  subjectParts.push(`건강만다라 총점 ${escapeHtml(totalScore)}/256`);
+
+  return `
+  <section class="report-page">
+    <div class="cover-hero">
+      <div class="badge">🎁 진단가 100,000원 상당의 프리미엄 통합분석을 무료로 제공합니다</div>
+      <h1>${escapeHtml(name || '고객')}님, 건강만다라로 몸의 패턴을 읽었습니다</h1>
+      <p class="sub">검진결과 × 생활습관 × 건강만다라 8영역 통합분석 리포트</p>
+      <p class="greeting">${escapeHtml(report.greeting || '')}</p>
+    </div>
+    <div class="subject-card">
+      <div class="subject-row">${subjectParts.join(' · ')}</div>
+    </div>
+    <div class="insight-grid">${insightCards}</div>
+    <div class="positioning-box">
+      <h3>Report Positioning</h3>
+      <p>이 리포트는 건강만다라와 검진결과를 함께 읽어, 생활습관 우선순위를 설계하는 건강코치형 통합분석 보고서입니다. 진단보다 실행, 이론보다 적용, 정보보다 변화에 초점을 맞춥니다.</p>
+    </div>
+    ${FOOTER_HTML}
+  </section>`;
+}
+
+function renderDashboardPage(data, chapterIndex, pageNumber) {
+  const { checkupSummary } = data;
+  const byKey = {};
+  (checkupSummary || []).forEach((c) => { byKey[c.key] = c; });
+
+  const statDefs = [];
+  if (byKey.bmi) statDefs.push({ label: 'BMI', value: byKey.bmi.value, interp: byKey.bmi.status === 'ok' ? '정상' : byKey.bmi.status === 'gz' ? '과체중' : '비만' });
+  if (byKey.waist) statDefs.push({ label: '허리둘레', value: `${byKey.waist.value}cm`, interp: byKey.waist.status === 'ok' ? '정상' : '복부비만 경계' });
+  if (byKey.sbp && byKey.dbp) statDefs.push({ label: '혈압', value: `${byKey.sbp.value}/${byKey.dbp.value}`, interp: byKey.sbp.status === 'ok' ? '정상' : '높은 편' });
+  if (byKey.fbg) statDefs.push({ label: '공복혈당', value: byKey.fbg.value, interp: byKey.fbg.status === 'ok' ? '정상' : byKey.fbg.status === 'gz' ? '경계' : '주의' });
+  if (byKey.hba1c) statDefs.push({ label: 'HbA1c', value: `${byKey.hba1c.value}%`, interp: byKey.hba1c.status === 'ok' ? '정상' : '당대사 경계' });
+  if (byKey.tg) statDefs.push({ label: '중성지방', value: byKey.tg.value, interp: byKey.tg.status === 'ok' ? '정상' : '높음' });
+
+  const statCards = statDefs
+    .map((s) => `<div class="stat-card"><div class="label">${escapeHtml(s.label)}</div><div class="value">${escapeHtml(s.value)}</div><div class="interp">${escapeHtml(s.interp)}</div></div>`)
+    .join('');
+
+  const rows = (checkupSummary || [])
+    .map((c) => `<tr><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.value)}${escapeHtml(c.unit)}</td><td>${escapeHtml(c.status === 'ok' ? '정상' : c.status === 'gz' ? '경계' : '주의')}</td></tr>`)
+    .join('');
+
+  const body = `
+    <div class="stat-grid">${statCards}</div>
+    <h3 style="font-size:13px;color:var(--navy);margin-bottom:10px;">검진 수치 요약표</h3>
+    <table class="summary-table">
+      <thead><tr><th>항목</th><th>결과</th><th>해석</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+
+  return wrapPage(chapterIndex, pageNumber, '바디 시그널 대시보드', '검진수치 핵심 요약', body);
+}
+
+function renderAreaMapPage(data, chapterIndex, pageNumber) {
+  const { report, areaScores } = data;
   const areaBars = (areaScores || [])
-    .map(
-      (a) => `
+    .map((a) => `
     <div class="area-bar-row">
-      <div class="area-bar-label">${escapeHtml(a.name)}</div>
+      <div class="area-bar-label">${escapeHtml(a.icon || '')}${escapeHtml(a.name)}</div>
       <div class="area-bar-track"><div class="area-bar-fill" style="width:${a.pctVal}%"></div></div>
       <div class="area-bar-pct">${a.pctVal}%</div>
-    </div>`,
-    )
+    </div>`)
     .join('');
 
   const areaInterpretations = (report.areaInterpretations || [])
     .map((ai) => {
       const area = (areaScores || []).find((a) => a.id === ai.areaId);
-      const label = area ? area.name : `영역 ${ai.areaId}`;
-      return `<div class="area-interp"><strong>${escapeHtml(label)}</strong><p>${escapeHtml(ai.summary)}</p></div>`;
+      const label = area ? `${area.icon || ''}${area.name} ${area.pctVal}%` : `영역 ${ai.areaId}`;
+      return `<li><strong>${escapeHtml(label)}</strong> ¦ ${escapeHtml(ai.summary)}</li>`;
     })
     .join('');
 
-  const pairedSections = (report.pairedSections || [])
-    .map(
-      (p) => `
-    <div class="paired-section">
-      <h3>${escapeHtml(p.title)}</h3>
-      <div class="paired-cols">
-        <div>${escapeHtml(p.leftNarrative)}</div>
-        <div>${escapeHtml(p.rightNarrative)}</div>
-      </div>
-      <div class="exec-translation"><strong>실행 번역</strong><br>${escapeHtml(p.executionTranslation)}</div>
-      <div class="mission-box"><strong>이번 달 핵심 미션</strong><br>${escapeHtml(p.monthlyMission)}</div>
-    </div>`,
-    )
+  const body = `
+    <div class="radar-wrap"><canvas id="radarCanvas" width="230" height="230"></canvas></div>
+    ${areaBars}
+    <ul class="area-interp-list">${areaInterpretations}</ul>`;
+
+  return wrapPage(chapterIndex, pageNumber, '건강만다라 8영역 맵', '전체 구조와 점수 해석', body);
+}
+
+function renderPairPage(pair, meta, chapterIndex, pageNumber) {
+  const body = `
+    <div class="pair-cards">
+      <div class="pair-card"><h4>${escapeHtml(pair.leftTitle)}</h4><p>${escapeHtml(pair.leftNarrative)}</p></div>
+      <div class="pair-card"><h4>${escapeHtml(pair.rightTitle)}</h4><p>${escapeHtml(pair.rightNarrative)}</p></div>
+    </div>
+    <div class="middle-box"><h4>${escapeHtml(pair.middleTitle)}</h4><p>${escapeHtml(pair.middleNarrative)}</p></div>
+    <div class="highlight-box"><h4>${escapeHtml(pair.highlightTitle)}</h4><ul>${linesToListItems(pair.highlightContent)}</ul></div>`;
+
+  return wrapPage(chapterIndex, pageNumber, meta.label, meta.subtitle, body);
+}
+
+function renderTargetPage(data, chapterIndex, pageNumber) {
+  const { report, targetTable } = data;
+  const rows = (targetTable || [])
+    .map((t) => `<tr><td>${escapeHtml(t.name)}</td><td>${escapeHtml(t.current)}${escapeHtml(t.unit)} → ${escapeHtml(t.target)}</td><td>${escapeHtml(t.note)}</td></tr>`)
     .join('');
 
-  const checkupRows = (checkupSummary || [])
-    .map(
-      (c) => `<tr><td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.value)}${escapeHtml(c.unit)}</td><td>${escapeHtml(c.status)}</td></tr>`,
-    )
-    .join('');
-  const checkupTable =
-    checkupSummary && checkupSummary.length > 0
-      ? `
-    <div class="section">
-      <h2>검진수치 요약</h2>
-      <table class="checkup-table">
-        <thead><tr><th>항목</th><th>수치</th><th>상태</th></tr></thead>
-        <tbody>${checkupRows}</tbody>
-      </table>
-    </div>`
-      : '';
+  const body = `
+    <table class="target-table">
+      <thead><tr><th>항목</th><th>현재/목표</th><th>설명</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="priority-box">${escapeHtml(report.priorityExplanation || '')}</div>
+    <div class="hope-box">${escapeHtml(report.hopeMessage || '')}</div>`;
 
-  const np = report.nutritionPlan || {};
-  const nutritionCards = (np.recommendations || [])
-    .map(
-      (r) => `
+  return wrapPage(chapterIndex, pageNumber, '목표치 설계', '수치 목표와 8영역 우선순위', body);
+}
+
+function renderNutritionPage(data, chapterIndex, pageNumber) {
+  const np = data.report.nutritionPlan || {};
+  const cards = (np.recommendations || [])
+    .map((r) => `
     <div class="nutrition-card">
       <h4>${escapeHtml(r.title)}</h4>
       <p>${escapeHtml(r.description)}</p>
       <div class="evidence-source">📖 근거: ${escapeHtml(r.evidenceSource)}</div>
-    </div>`,
-    )
-    .join('');
-  const nutritionSection = np.summary
-    ? `
-    <div class="section">
-      <h2>🥗 나의 영양설계 추천</h2>
-      <p class="nutrition-summary">${escapeHtml(np.summary)}</p>
-      ${nutritionCards}
-    </div>`
-    : '';
-
-  const roadmapRows = (report.roadmap12Week || [])
-    .map((r) => `<div class="roadmap-row"><div class="roadmap-week">${escapeHtml(r.week)}</div><div>${escapeHtml(r.action)}</div></div>`)
+    </div>`)
     .join('');
 
-  const fc = report.finalConclusion || {};
+  const body = `
+    <p class="nutrition-summary">${escapeHtml(np.summary || '')}</p>
+    ${cards}`;
 
-  root.innerHTML = `
-    <div class="hero">
-      <div style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:16px;padding:4px 12px;font-size:10px;font-weight:700;margin-bottom:6px;">🎁 진단가 100,000원 상당의 프리미엄 통합분석을 무료로 제공합니다</div>
-      <h1>${escapeHtml(name || '고객')}님, 건강만다라로 몸의 패턴을 읽었습니다</h1>
-      <p class="greeting">${escapeHtml(report.greeting || '')}</p>
-      <p class="total">건강만다라 총점 ${escapeHtml(totalScore)}/256</p>
-    </div>
-    <div class="insight-grid">${insightCards}</div>
-    <div class="section">
-      <h2>8영역 맵</h2>
-      <div class="radar-wrap"><canvas id="radarCanvas" width="220" height="220"></canvas></div>
-      ${areaBars}
-    </div>
-    <div class="section page-break-before">
-      <h2>8영역 해석 요약</h2>
-      ${areaInterpretations}
-    </div>
-    <div class="section">
-      ${pairedSections}
-    </div>
-    ${checkupTable}
-    <div class="section">
-      <h2>8영역 우선순위</h2>
-      <p style="font-size:12px;line-height:1.7;color:#4A5E52;">${escapeHtml(report.priorityExplanation || '')}</p>
-    </div>
-    ${nutritionSection}
-    <div class="section">
-      <h2>12주 실행 로드맵</h2>
-      ${roadmapRows}
-    </div>
-    <div class="section conclusion-box">
-      <h2>최종 결론</h2>
-      <p><strong>${escapeHtml(fc.oneLineSummary || '')}</strong></p>
-      <p>${escapeHtml(fc.whyStrong || '')}</p>
-      <p>${escapeHtml(fc.finalProposal || '')}</p>
-    </div>
-    <p class="footer-note">© 2026 건강이음센터. 본 리포트는 생활습관 코칭 참고용이며 의학적 진단을 대체하지 않습니다. (저작권등록번호 C-2026-026168)</p>
-    <p class="footer-note" style="margin-top:4px;">기업·기관 사용 문의: ufoacademy@naver.com</p>
-  `;
-
-  drawRadar(areaScores || []);
+  return wrapPage(chapterIndex, pageNumber, '나의 영양설계 추천', '취약 영역 기반 맞춤 영양 가이드', body);
 }
 
-function drawRadar(areaScores){
-  const canvas=document.getElementById('radarCanvas');
-  if(!canvas) return;
-  const ctx=canvas.getContext('2d');
-  const W=canvas.width, H=canvas.height;
-  const cx=W/2, cy=H/2, r=Math.min(W,H)/2-40;
-  const n=8;
-  const angles=Array.from({length:n},(_,i)=>((2*Math.PI/n)*i)-Math.PI/2);
+function renderRoadmapPage(data, chapterIndex, pageNumber) {
+  const { report } = data;
+  const rows = (report.roadmap12Week || [])
+    .map((r) => `<div class="roadmap-row"><div class="roadmap-week">${escapeHtml(r.week)}</div><div>${escapeHtml(r.action)}</div></div>`)
+    .join('');
+  const messages = (report.messagingExamples || [])
+    .map((m) => `<li>${escapeHtml(m)}</li>`)
+    .join('');
 
-  ctx.clearRect(0,0,W,H);
+  const body = `
+    ${rows}
+    <div class="messaging-box">
+      <h4>메시징 서비스 예시</h4>
+      <ul>${messages}</ul>
+    </div>`;
 
-  for(let level=1;level<=4;level++){
-    ctx.beginPath();
-    angles.forEach((angle,i)=>{
-      const x=cx+Math.cos(angle)*(r*(level/4));
-      const y=cy+Math.sin(angle)*(r*(level/4));
-      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    });
-    ctx.closePath();
-    ctx.strokeStyle=`rgba(45,106,79,${0.1+level*0.05})`;
-    ctx.lineWidth=1;
-    ctx.stroke();
-    ctx.fillStyle='rgba(240,250,243,0.3)';
-    ctx.fill();
+  return wrapPage(chapterIndex, pageNumber, '실행 로드맵', '건강만다라 기반 행동 설계', body);
+}
+
+function renderConclusionPage(data, chapterIndex, pageNumber) {
+  const fc = data.report.finalConclusion || {};
+  const body = `
+    <div class="conclusion-block"><h4>한 줄 결론</h4><p>${escapeHtml(fc.oneLineSummary || '')}</p></div>
+    <div class="conclusion-block"><h4>왜 이 방식이 강한가</h4><p>${escapeHtml(fc.whyStrong || '')}</p></div>
+    <div class="conclusion-block"><h4>최종 제안</h4><ol>${linesToListItems(fc.finalProposal)}</ol></div>`;
+
+  return wrapPage(chapterIndex, pageNumber, '최종 결론', '건강만다라 통합분석의 핵심 요약', body);
+}
+
+function renderReport(data) {
+  const root = document.getElementById('reportRoot');
+  const hasCheckup = Array.isArray(data.checkupSummary) && data.checkupSummary.length > 0;
+  const hasTargets = Array.isArray(data.targetTable) && data.targetTable.length > 0;
+  const pairedSections = data.report.pairedSections || [];
+
+  const pages = [];
+  let chapter = 0;
+  let pageNum = 1;
+
+  pages.push(renderCoverPage(data, pageNum));
+
+  if (hasCheckup) {
+    chapter++; pageNum++;
+    pages.push(renderDashboardPage(data, chapter, pageNum));
   }
 
-  angles.forEach(angle=>{
+  chapter++; pageNum++;
+  pages.push(renderAreaMapPage(data, chapter, pageNum));
+
+  PAIR_META.forEach((meta, i) => {
+    if (!pairedSections[i]) return;
+    chapter++; pageNum++;
+    pages.push(renderPairPage(pairedSections[i], meta, chapter, pageNum));
+  });
+
+  if (hasCheckup && hasTargets) {
+    chapter++; pageNum++;
+    pages.push(renderTargetPage(data, chapter, pageNum));
+  }
+
+  chapter++; pageNum++;
+  pages.push(renderNutritionPage(data, chapter, pageNum));
+
+  chapter++; pageNum++;
+  pages.push(renderRoadmapPage(data, chapter, pageNum));
+
+  chapter++; pageNum++;
+  pages.push(renderConclusionPage(data, chapter, pageNum));
+
+  root.innerHTML = pages.join('');
+
+  drawRadar(data.areaScores || []);
+}
+
+function drawRadar(areaScores) {
+  const canvas = document.getElementById('radarCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W / 2, cy = H / 2, r = Math.min(W, H) / 2 - 42;
+  const n = 8;
+  const angles = Array.from({ length: n }, (_, i) => ((2 * Math.PI / n) * i) - Math.PI / 2);
+
+  ctx.clearRect(0, 0, W, H);
+
+  for (let level = 1; level <= 4; level++) {
     ctx.beginPath();
-    ctx.moveTo(cx,cy);
-    ctx.lineTo(cx+Math.cos(angle)*r, cy+Math.sin(angle)*r);
-    ctx.strokeStyle='rgba(45,106,79,0.2)';
-    ctx.lineWidth=1;
+    angles.forEach((angle, i) => {
+      const x = cx + Math.cos(angle) * (r * (level / 4));
+      const y = cy + Math.sin(angle) * (r * (level / 4));
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle = `rgba(27,42,71,${0.08 + level * 0.05})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+
+  angles.forEach((angle) => {
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    ctx.strokeStyle = 'rgba(27,42,71,0.15)';
+    ctx.lineWidth = 1;
     ctx.stroke();
   });
 
   ctx.beginPath();
-  areaScores.forEach((a,i)=>{
-    const ratio=a.score/32;
-    const x=cx+Math.cos(angles[i])*r*ratio;
-    const y=cy+Math.sin(angles[i])*r*ratio;
-    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  areaScores.forEach((a, i) => {
+    const ratio = a.score / 32;
+    const x = cx + Math.cos(angles[i]) * r * ratio;
+    const y = cy + Math.sin(angles[i]) * r * ratio;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
   });
   ctx.closePath();
-  ctx.fillStyle='rgba(82,183,136,0.3)';
+  ctx.fillStyle = 'rgba(201,162,39,0.25)';
   ctx.fill();
-  ctx.strokeStyle='rgba(45,106,79,0.9)';
-  ctx.lineWidth=2.5;
+  ctx.strokeStyle = 'rgba(27,42,71,0.9)';
+  ctx.lineWidth = 2.5;
   ctx.stroke();
 
-  areaScores.forEach((a,i)=>{
-    const ratio=a.score/32;
-    const x=cx+Math.cos(angles[i])*r*ratio;
-    const y=cy+Math.sin(angles[i])*r*ratio;
+  areaScores.forEach((a, i) => {
+    const ratio = a.score / 32;
+    const x = cx + Math.cos(angles[i]) * r * ratio;
+    const y = cy + Math.sin(angles[i]) * r * ratio;
     ctx.beginPath();
-    ctx.arc(x,y,5,0,2*Math.PI);
-    ctx.fillStyle=a.color||'#2D6A4F';
+    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx.fillStyle = '#1B2A47';
     ctx.fill();
-    ctx.strokeStyle='#fff';
-    ctx.lineWidth=2;
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
     ctx.stroke();
   });
 
-  ctx.font='bold 12px "Noto Sans KR", sans-serif';
-  ctx.textAlign='center';
-  ctx.textBaseline='middle';
-  areaScores.forEach((a,i)=>{
-    const lx=cx+Math.cos(angles[i])*(r+26);
-    const ly=cy+Math.sin(angles[i])*(r+26);
-    ctx.fillStyle=a.color||'#2D6A4F';
-    ctx.fillText(`${a.icon||''}${a.name}`,lx,ly-5);
-    ctx.fillStyle='#8AA693';
-    ctx.font='10px "Noto Sans KR"';
-    ctx.fillText(`${a.pctVal}%`,lx,ly+8);
-    ctx.font='bold 12px "Noto Sans KR", sans-serif';
+  ctx.font = 'bold 11px "Noto Sans KR", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  areaScores.forEach((a, i) => {
+    const lx = cx + Math.cos(angles[i]) * (r + 28);
+    const ly = cy + Math.sin(angles[i]) * (r + 28);
+    ctx.fillStyle = '#1B2A47';
+    ctx.fillText(`${a.icon || ''}${a.name}`, lx, ly - 5);
+    ctx.fillStyle = '#8A94A6';
+    ctx.font = '9.5px "Noto Sans KR"';
+    ctx.fillText(`${a.pctVal}%`, lx, ly + 8);
+    ctx.font = 'bold 11px "Noto Sans KR", sans-serif';
   });
 }
 
