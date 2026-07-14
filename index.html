@@ -2662,6 +2662,28 @@ function collectCheckupSummaryForReport(){
   }));
 }
 
+function collectTargetTableForReport(){
+  const rows=[];
+  const pushRow=(key,name,unit,target)=>{
+    const entry=checkupData[key];
+    if(!entry) return;
+    const note=(entry.bm.habit||'').split(',')[0]||'';
+    rows.push({key,name,current:entry.value,unit,target,note});
+  };
+  pushRow('bmi','체질량지수(BMI)','kg/m²','23 미만');
+  pushRow('waist','허리둘레','cm', gender()==='f' ? '80cm 미만' : '85cm 미만');
+  const sbpEntry=checkupData['sbp'], dbpEntry=checkupData['dbp'];
+  if(sbpEntry && dbpEntry){
+    const note=(sbpEntry.bm.habit||'').split(',')[0]||'';
+    rows.push({key:'bp',name:'혈압',current:`${sbpEntry.value}/${dbpEntry.value}`,unit:'mmHg',target:'120/80 미만',note});
+  }
+  pushRow('fbg','공복혈당','mg/dL','100 미만');
+  pushRow('hba1c','당화혈색소(HbA1c)','%','5.7 미만');
+  pushRow('tg','중성지방','mg/dL','150 미만');
+  pushRow('vitd','비타민 D','ng/mL','30 이상');
+  return rows;
+}
+
 async function submitPremiumLead(){
   const name=document.getElementById('premiumName').value.trim();
   const age=document.getElementById('premiumAge').value.trim();
@@ -2687,6 +2709,7 @@ async function submitPremiumLead(){
   const areaScores=collectAreaScoresForReport();
   const totalScore=areaScores.reduce((s,a)=>s+a.score,0);
   const checkupSummary=collectCheckupSummaryForReport();
+  const targetTable=collectTargetTableForReport();
 
   const loadingOverlay=document.getElementById('loadingOverlay');
   const loadingTitle=document.getElementById('loadingTitle');
@@ -2718,7 +2741,7 @@ async function submitPremiumLead(){
       throw new Error(data.error||'요청 처리 중 문제가 발생했습니다');
     }
     sessionStorage.setItem('premiumReport',JSON.stringify({
-      report:data.report, name, areaScores, checkupSummary, totalScore
+      report:data.report, name, age, gender:genderVal, areaScores, checkupSummary, targetTable, totalScore
     }));
     window.location.href='report.html';
   }catch(err){
