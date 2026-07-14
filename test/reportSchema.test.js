@@ -14,7 +14,9 @@ test('schema requires all top-level report fields', () => {
     'pairedSections',
     'priorityExplanation',
     'nutritionPlan',
+    'hopeMessage',
     'roadmap12Week',
+    'messagingExamples',
     'finalConclusion',
   ];
   for (const field of expected) {
@@ -30,19 +32,38 @@ test('nutritionPlan requires summary and recommendations with evidenceSource per
   assert.deepEqual(recFields.sort(), ['description', 'evidenceSource', 'title'].sort());
 });
 
-test('coreInsights has no minItems/maxItems (Claude structured output does not support array length constraints; exact count of 4 is enforced via prompt instructions)', () => {
+test('coreInsights and messagingExamples have no minItems/maxItems (Claude structured output does not support array length constraints; exact counts enforced via prompt + defensive slicing)', () => {
   assert.equal(REPORT_SCHEMA.properties.coreInsights.minItems, undefined);
   assert.equal(REPORT_SCHEMA.properties.coreInsights.maxItems, undefined);
+  assert.equal(REPORT_SCHEMA.properties.messagingExamples.minItems, undefined);
+  assert.equal(REPORT_SCHEMA.properties.messagingExamples.maxItems, undefined);
 });
 
-test('pairedSections has all narrative fields and no length constraints', () => {
+test('messagingExamples is an array of strings', () => {
+  assert.equal(REPORT_SCHEMA.properties.messagingExamples.type, 'array');
+  assert.equal(REPORT_SCHEMA.properties.messagingExamples.items.type, 'string');
+});
+
+test('hopeMessage is a plain string field', () => {
+  assert.equal(REPORT_SCHEMA.properties.hopeMessage.type, 'string');
+});
+
+test('pairedSections has the new left/right/middle/highlight fields and no length constraints', () => {
   const paired = REPORT_SCHEMA.properties.pairedSections;
   assert.equal(paired.minItems, undefined);
   assert.equal(paired.maxItems, undefined);
-  const requiredFields = ['title', 'leftNarrative', 'rightNarrative', 'executionTranslation', 'monthlyMission'];
+  const requiredFields = [
+    'leftTitle', 'leftNarrative',
+    'rightTitle', 'rightNarrative',
+    'middleTitle', 'middleNarrative',
+    'highlightTitle', 'highlightContent',
+  ];
   for (const field of requiredFields) {
     assert.ok(paired.items.required.includes(field), `missing paired section field: ${field}`);
   }
+  assert.ok(!paired.items.required.includes('title'), 'old "title" field should be removed');
+  assert.ok(!paired.items.required.includes('executionTranslation'), 'old "executionTranslation" field should be removed');
+  assert.ok(!paired.items.required.includes('monthlyMission'), 'old "monthlyMission" field should be removed');
 });
 
 test('finalConclusion requires oneLineSummary, whyStrong, finalProposal', () => {
