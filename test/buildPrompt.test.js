@@ -104,3 +104,22 @@ test('system prompt instructs mapping weak sub-dimensions to specific nutrients'
   assert.match(result.system, /식이섬유/);
   assert.match(result.system, /마그네슘/);
 });
+
+test('system prompt instructs the new pairedSections field names (left/right/middle/highlight)', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /leftTitle/);
+  assert.match(result.system, /middleTitle/);
+  assert.match(result.system, /highlightTitle/);
+});
+
+test('system prompt instructs highlightContent and finalProposal to be newline-separated short items', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /highlightContent/);
+  assert.match(result.system, /줄바꿈/);
+});
+
+test('system prompt instructs hopeMessage and messagingExamples content', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /hopeMessage/);
+  assert.match(result.system, /messagingExamples/);
+});
