@@ -2662,6 +2662,8 @@ function collectCheckupSummaryForReport(){
   }));
 }
 
+// target 문자열은 BIOMARKERS[key].grade()의 정상 판정 경계값을 그대로 옮긴 값이다.
+// grade() 임계값을 바꾸면 아래 target 문자열도 함께 갱신해야 한다.
 function collectTargetTableForReport(){
   const rows=[];
   const pushRow=(key,name,unit,target)=>{

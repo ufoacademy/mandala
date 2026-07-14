@@ -305,7 +305,7 @@ function renderAreaMapPage(data, chapterIndex, pageNumber) {
     .map((ai) => {
       const area = (areaScores || []).find((a) => a.id === ai.areaId);
       const label = area ? `${area.icon || ''}${area.name} ${area.pctVal}%` : `영역 ${ai.areaId}`;
-      return `<li><strong>${escapeHtml(label)}</strong> ¦ ${escapeHtml(ai.summary)}</li>`;
+      return `<li><strong>${escapeHtml(label)}</strong> · ${escapeHtml(ai.summary)}</li>`;
     })
     .join('');
 
