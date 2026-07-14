@@ -74,6 +74,9 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
       if (report.nutritionPlan && Array.isArray(report.nutritionPlan.recommendations)) {
         report.nutritionPlan.recommendations = report.nutritionPlan.recommendations.slice(0, 5);
       }
+      if (Array.isArray(report.messagingExamples)) {
+        report.messagingExamples = report.messagingExamples.slice(0, 4);
+      }
       res.status(200).json({ report });
     } catch (err) {
       console.error('claude request failed', err);

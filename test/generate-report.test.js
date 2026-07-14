@@ -148,20 +148,21 @@ test('requests enough max_tokens headroom for thinking + full report (regression
   assert.ok(capturedParams.max_tokens >= 16000, `max_tokens too low: ${capturedParams.max_tokens}`);
 });
 
-test('clamps coreInsights and pairedSections to 4 items when Claude overshoots (schema cannot enforce minItems/maxItems)', async () => {
+test('clamps coreInsights, pairedSections, messagingExamples to their max counts when Claude overshoots (schema cannot enforce minItems/maxItems)', async () => {
   const oversizedReport = {
     greeting: '안녕하세요',
     coreInsights: ['a', 'b', 'c', 'd', 'stray extra item'],
     areaInterpretations: [],
     pairedSections: [
-      { title: '1', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
-      { title: '2', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
-      { title: '3', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
-      { title: '4', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
-      { title: '5 stray', leftNarrative: '', rightNarrative: '', executionTranslation: '', monthlyMission: '' },
+      { leftTitle: '1', leftNarrative: '', rightTitle: '', rightNarrative: '', middleTitle: '', middleNarrative: '', highlightTitle: '', highlightContent: '' },
+      { leftTitle: '2', leftNarrative: '', rightTitle: '', rightNarrative: '', middleTitle: '', middleNarrative: '', highlightTitle: '', highlightContent: '' },
+      { leftTitle: '3', leftNarrative: '', rightTitle: '', rightNarrative: '', middleTitle: '', middleNarrative: '', highlightTitle: '', highlightContent: '' },
+      { leftTitle: '4', leftNarrative: '', rightTitle: '', rightNarrative: '', middleTitle: '', middleNarrative: '', highlightTitle: '', highlightContent: '' },
+      { leftTitle: '5 stray', leftNarrative: '', rightTitle: '', rightNarrative: '', middleTitle: '', middleNarrative: '', highlightTitle: '', highlightContent: '' },
     ],
     priorityExplanation: 'x',
     roadmap12Week: [],
+    messagingExamples: ['m1', 'm2', 'm3', 'm4', 'm5 stray'],
     finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
   };
   const handler = createHandler({
@@ -178,7 +179,9 @@ test('clamps coreInsights and pairedSections to 4 items when Claude overshoots (
   assert.equal(res.body.report.coreInsights.length, 4);
   assert.deepEqual(res.body.report.coreInsights, ['a', 'b', 'c', 'd']);
   assert.equal(res.body.report.pairedSections.length, 4);
-  assert.equal(res.body.report.pairedSections[3].title, '4');
+  assert.equal(res.body.report.pairedSections[3].leftTitle, '4');
+  assert.equal(res.body.report.messagingExamples.length, 4);
+  assert.deepEqual(res.body.report.messagingExamples, ['m1', 'm2', 'm3', 'm4']);
 });
 
 test('posts lead to sheets webhook when configured (best-effort, does not block response)', async () => {
