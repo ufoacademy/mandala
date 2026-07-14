@@ -18,12 +18,13 @@ function mockRes() {
 }
 
 function makeAreaScores() {
+  const pctVals = [63, 40, 90, 25, 75, 50, 85, 60];
   return Array.from({ length: 8 }, (_, i) => ({
     id: i + 1,
     name: `영역${i + 1}`,
     sub: `서브${i + 1}`,
     score: 20,
-    pctVal: 63,
+    pctVal: pctVals[i],
   }));
 }
 
@@ -205,6 +206,9 @@ test('posts lead to sheets webhook when configured (best-effort, does not block 
   assert.equal(postedPayload.age, '35');
   assert.equal(postedPayload.gender, 'm');
   assert.equal(postedPayload.totalScore, 160);
+  assert.equal(postedPayload.weakArea1, '영역4 25%');
+  assert.equal(postedPayload.weakArea2, '영역2 40%');
+  assert.equal(postedPayload.weakArea3, '영역6 50%');
 });
 
 test('returns 502 when Claude call fails', async () => {

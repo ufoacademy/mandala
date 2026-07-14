@@ -63,16 +63,55 @@ body { font-family:'Noto Sans KR',sans-serif; color:#1B2E22; background:#F7FBF8;
 .error-box { text-align:center; padding:80px 20px; }
 .error-box h2 { font-size:18px; margin-bottom:10px; }
 .error-box a { color:#2D6A4F; font-weight:700; text-decoration:underline; }
+.inapp-banner { display:none; background:#FFF3E0; border-bottom:2px solid #E07B39; padding:12px 20px; font-size:12.5px; line-height:1.7; color:#7A4A1E; }
+.inapp-banner.show { display:block; }
+.inapp-banner strong { color:#B94A00; }
+.inapp-banner button { margin-top:8px; background:#2D6A4F; color:#fff; border:none; border-radius:8px; padding:8px 14px; font-weight:700; font-size:12px; cursor:pointer; }
 </style>
 </head>
 <body>
+<div class="inapp-banner no-print" id="inappBanner">
+  <strong>⚠️ PDF 저장이 안 되시나요?</strong> 카카오톡·인스타그램 등 앱 내 브라우저에서는 인쇄/PDF 기능이 지원되지 않습니다.<br>
+  화면 우측 상단(또는 하단) <strong>'···' 메뉴 → 다른 브라우저로 열기(Safari/Chrome)</strong>를 선택해주세요.<br>
+  <button onclick="copyReportLink()" id="copyLinkBtn">🔗 이 링크 복사하기</button>
+</div>
 <div class="toolbar no-print">
   <span>🌿 건강만다라 프리미엄 리포트</span>
-  <button onclick="window.print()">🖨️ 인쇄 / PDF로 저장</button>
+  <button onclick="handlePrintClick()">🖨️ 인쇄 / PDF로 저장</button>
 </div>
 <div class="page" id="reportRoot"></div>
 
 <script>
+function isInAppBrowser() {
+  const ua = navigator.userAgent || '';
+  return /KAKAOTALK|Instagram|NAVER\(inapp;|FBAN|FBAV|Line\//i.test(ua);
+}
+
+function handlePrintClick() {
+  if (isInAppBrowser()) {
+    document.getElementById('inappBanner').classList.add('show');
+    document.getElementById('inappBanner').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+  window.print();
+}
+
+function copyReportLink() {
+  const btn = document.getElementById('copyLinkBtn');
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    btn.textContent = '✅ 복사 완료! Safari/Chrome에 붙여넣기 하세요';
+    setTimeout(() => { btn.textContent = '🔗 이 링크 복사하기'; }, 3000);
+  }).catch(() => {
+    btn.textContent = '복사 실패 - 주소창에서 직접 복사해주세요';
+  });
+}
+
+if (isInAppBrowser()) {
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('inappBanner').classList.add('show');
+  });
+}
+
 function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str == null ? '' : String(str);

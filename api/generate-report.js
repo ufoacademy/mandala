@@ -3,6 +3,13 @@ const { validateLead } = require('../lib/validateLead');
 const { buildPrompt } = require('../lib/buildPrompt');
 const { REPORT_SCHEMA } = require('../lib/reportSchema');
 
+function getWeakestAreas(areaScores, count = 3) {
+  return [...areaScores]
+    .sort((a, b) => a.pctVal - b.pctVal)
+    .slice(0, count)
+    .map((a) => `${a.name} ${a.pctVal}%`);
+}
+
 function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
   return async function handler(req, res) {
     if (req.method !== 'POST') {
@@ -28,6 +35,7 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
     }
 
     if (sheetsWebhookUrl) {
+      const weakAreas = Array.isArray(areaScores) ? getWeakestAreas(areaScores) : [];
       postLead(sheetsWebhookUrl, {
         name: lead.name,
         age: lead.age,
@@ -36,6 +44,9 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
         email: lead.email,
         timestamp: new Date().toISOString(),
         totalScore: totalScore ?? null,
+        weakArea1: weakAreas[0] || '',
+        weakArea2: weakAreas[1] || '',
+        weakArea3: weakAreas[2] || '',
       }).catch((err) => {
         console.error('lead webhook failed', err);
       });

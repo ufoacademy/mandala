@@ -10,6 +10,9 @@ function doPost(e) {
     data.email || '',
     data.contact || '',
     data.totalScore != null ? data.totalScore : '',
+    data.weakArea1 || '',
+    data.weakArea2 || '',
+    data.weakArea3 || '',
   ]);
 
   return ContentService
