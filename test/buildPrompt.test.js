@@ -123,3 +123,10 @@ test('system prompt instructs hopeMessage and messagingExamples content', () => 
   assert.match(result.system, /hopeMessage/);
   assert.match(result.system, /messagingExamples/);
 });
+
+test('system prompt forbids generic advice and requires concrete time/frequency/quantity', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /두루뭉술/);
+  assert.match(result.system, /규칙적으로 운동하세요/);
+  assert.match(result.system, /시간·횟수·양/);
+});
