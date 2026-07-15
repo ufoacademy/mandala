@@ -66,7 +66,10 @@ function appendDiagnosisRow(data) {
 }
 
 function appendPremiumLeadRow(data) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  // 활성 탭(getActiveSheet)에 의존하면, 사용자가 마지막으로 어느 탭을 보고 있었는지에 따라
+  // 엉뚱한 탭에 기록될 수 있다. 인적사항 탭은 항상 첫 번째 탭(스프레드시트 생성 시 기본 탭)이라고
+  // 가정하고 위치로 고정 참조한다.
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheets()[0];
   sheet.appendRow([
     new Date(data.timestamp || new Date()),
     data.name || '',
