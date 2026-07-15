@@ -18,7 +18,7 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
     }
 
     const body = req.body || {};
-    const { name, age, gender, contact, email, consent, honeypot, areaScores, checkupSummary, totalScore } = body;
+    const { id, name, age, gender, contact, email, consent, honeypot, areaScores, checkupSummary, totalScore, lowScoreItems } = body;
 
     const lead = validateLead({ name, age, gender, contact, email, consent, honeypot });
     if (!lead.valid) {
@@ -28,7 +28,7 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
 
     let prompt;
     try {
-      prompt = buildPrompt({ name: lead.name, areaScores, checkupSummary, totalScore });
+      prompt = buildPrompt({ name: lead.name, areaScores, checkupSummary, totalScore, lowScoreItems });
     } catch (err) {
       res.status(400).json({ error: 'invalid_scores', message: err.message });
       return;
@@ -37,6 +37,8 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
     if (sheetsWebhookUrl) {
       const weakAreas = Array.isArray(areaScores) ? getWeakestAreas(areaScores) : [];
       postLead(sheetsWebhookUrl, {
+        type: 'premium_lead',
+        id: id || '',
         name: lead.name,
         age: lead.age,
         gender: lead.gender,

@@ -1562,6 +1562,7 @@ let answers = {};  // key: "areaId-dimIdx-qIdx" → value: 1~4
 let currentArea = 0;
 let selectedMode = 'both';
 let checkupData = {};
+let currentDiagnosisId = null;
 
 // ════════════════════════════════════════
 //  APP START — mode-aware
@@ -2292,6 +2293,9 @@ function buildResults(){
 
   // Radar
   setTimeout(()=>drawRadar(areaScores),200);
+
+  // 익명 진단 기록 (프리미엄 신청 여부와 무관하게 모든 진단 완료자 대상, best-effort)
+  logDiagnosisToSheet(collectAreaScoresForReport(),totalScore);
 }
 
 function buildCheckupResult(){
@@ -2656,6 +2660,37 @@ function collectAreaScoresForReport(){
   });
 }
 
+const DIM_LETTERS_FOR_CODE=['A','B','C','D'];
+
+function collectLowScoreItemsForReport(){
+  const items=[];
+  AREAS.forEach(area=>{
+    area.dims.forEach((dim,di)=>{
+      dim.questions.forEach((qText,qi)=>{
+        const key=`${area.id}-${di}-${qi}`;
+        if(answers[key]===1){
+          items.push({code:`${area.id}-${DIM_LETTERS_FOR_CODE[di]}-${qi+1}`, question:qText});
+        }
+      });
+    });
+  });
+  return items;
+}
+
+function generateDiagnosisId(){
+  return Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+}
+
+function logDiagnosisToSheet(areaScores,totalScore){
+  currentDiagnosisId=generateDiagnosisId();
+  const lowScoreItems=collectLowScoreItemsForReport();
+  fetch('/api/log-diagnosis',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({id:currentDiagnosisId,areaScores,lowScoreItems,totalScore})
+  }).catch(()=>{});
+}
+
 function collectCheckupSummaryForReport(){
   return Object.entries(checkupData).map(([key,data])=>({
     key, name:data.bm.name, value:data.value, unit:data.bm.unit||'', status:data.status, supp:data.bm.supp||''
@@ -2712,6 +2747,7 @@ async function submitPremiumLead(){
   const totalScore=areaScores.reduce((s,a)=>s+a.score,0);
   const checkupSummary=collectCheckupSummaryForReport();
   const targetTable=collectTargetTableForReport();
+  const lowScoreItems=collectLowScoreItemsForReport();
 
   const loadingOverlay=document.getElementById('loadingOverlay');
   const loadingTitle=document.getElementById('loadingTitle');
@@ -2736,7 +2772,7 @@ async function submitPremiumLead(){
     const resp=await fetch('/api/generate-report',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({name,age,gender:genderVal,contact,email,consent,honeypot,areaScores,checkupSummary,totalScore})
+      body:JSON.stringify({id:currentDiagnosisId,name,age,gender:genderVal,contact,email,consent,honeypot,areaScores,checkupSummary,totalScore,lowScoreItems})
     });
     const data=await resp.json();
     if(!resp.ok){

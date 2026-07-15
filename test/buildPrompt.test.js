@@ -130,3 +130,30 @@ test('system prompt forbids generic advice and requires concrete time/frequency/
   assert.match(result.system, /규칙적으로 운동하세요/);
   assert.match(result.system, /시간·횟수·양/);
 });
+
+test('shows placeholder text when lowScoreItems is empty or missing', () => {
+  const withEmpty = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160, lowScoreItems: [] });
+  assert.match(withEmpty.messages[0].content, /1점 문항 없음/);
+  const withMissing = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(withMissing.messages[0].content, /1점 문항 없음/);
+});
+
+test('includes lowScoreItems grouped by area label with the question text quoted', () => {
+  const result = buildPrompt({
+    name: '홍길동',
+    areaScores: makeAreaScores(),
+    totalScore: 160,
+    lowScoreItems: [
+      { code: '1-A-1', question: '나는 채소 반찬이나 쌈과 함께 식사한다.' },
+      { code: '3-B-2', question: '나는 매일 비슷한 시각에 잠자리에 든다.' },
+    ],
+  });
+  assert.match(result.messages[0].content, /- 식: "나는 채소 반찬이나 쌈과 함께 식사한다\."/);
+  assert.match(result.messages[0].content, /- 휴: "나는 매일 비슷한 시각에 잠자리에 든다\."/);
+});
+
+test('system prompt instructs using lowScoreItems for nutritionPlan and highlightContent', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /1점 응답 문항 목록/);
+  assert.match(result.system, /highlightContent/);
+});

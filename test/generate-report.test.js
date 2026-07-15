@@ -214,6 +214,57 @@ test('posts lead to sheets webhook when configured (best-effort, does not block 
   assert.equal(postedPayload.weakArea3, '영역6 50%');
 });
 
+test('includes type "premium_lead" and passes through the diagnosis id when posting to sheets webhook', async () => {
+  let postedPayload = null;
+  const fakeReport = {
+    greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
+    priorityExplanation: 'x', roadmap12Week: [], finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: { create: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) },
+    }),
+    postLead: async (url, payload) => {
+      postedPayload = payload;
+    },
+    sheetsWebhookUrl: 'https://example.com/webhook',
+  });
+  const req = { method: 'POST', body: validBody({ id: 'abc123' }) };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(postedPayload.type, 'premium_lead');
+  assert.equal(postedPayload.id, 'abc123');
+});
+
+test('passes lowScoreItems through to buildPrompt without breaking report generation', async () => {
+  const fakeReport = {
+    greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
+    priorityExplanation: 'x', roadmap12Week: [], finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  let capturedMessages = null;
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: {
+        create: async (params) => {
+          capturedMessages = params.messages;
+          return { content: [{ type: 'text', text: JSON.stringify(fakeReport) }] };
+        },
+      },
+    }),
+    postLead: async () => {},
+    sheetsWebhookUrl: null,
+  });
+  const req = {
+    method: 'POST',
+    body: validBody({ lowScoreItems: [{ code: '1-A-1', question: '나는 채소 반찬이나 쌈과 함께 식사한다.' }] }),
+  };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.match(capturedMessages[0].content, /나는 채소 반찬이나 쌈과 함께 식사한다\./);
+});
+
 test('returns 502 when Claude call fails', async () => {
   const handler = createHandler({
     createAnthropicClient: () => ({
