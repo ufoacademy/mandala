@@ -116,3 +116,19 @@ test('webhook failure does not block the 200 response (best-effort)', async () =
   await handler(req, res);
   assert.equal(res.statusCode, 200);
 });
+
+test('awaits postLead before responding (regression: fire-and-forget got cut off by the serverless runtime before the sheet write completed)', async () => {
+  let webhookResolved = false;
+  const handler = createHandler({
+    postLead: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      webhookResolved = true;
+    },
+    sheetsWebhookUrl: 'https://example.com/webhook',
+  });
+  const req = { method: 'POST', body: { id: 'x1', areaScores: makeAreaScores(), totalScore: 160 } };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(webhookResolved, true, 'handler must await postLead, not fire-and-forget it');
+  assert.equal(res.statusCode, 200);
+});

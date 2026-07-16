@@ -184,7 +184,7 @@ test('clamps coreInsights, pairedSections, messagingExamples to their max counts
   assert.deepEqual(res.body.report.messagingExamples, ['m1', 'm2', 'm3', 'm4']);
 });
 
-test('posts lead to sheets webhook when configured (best-effort, does not block response)', async () => {
+test('posts lead to sheets webhook when configured (best-effort: awaited, failures do not block the response)', async () => {
   let postedPayload = null;
   const fakeReport = {
     greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
@@ -212,6 +212,29 @@ test('posts lead to sheets webhook when configured (best-effort, does not block 
   assert.equal(postedPayload.weakArea1, '영역4 25%');
   assert.equal(postedPayload.weakArea2, '영역2 40%');
   assert.equal(postedPayload.weakArea3, '영역6 50%');
+});
+
+test('awaits postLead before responding (regression: fire-and-forget got cut off by the serverless runtime before the sheet write completed)', async () => {
+  let webhookResolved = false;
+  const fakeReport = {
+    greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
+    priorityExplanation: 'x', roadmap12Week: [], finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: { stream: () => ({ finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) }) },
+    }),
+    postLead: async () => {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+      webhookResolved = true;
+    },
+    sheetsWebhookUrl: 'https://example.com/webhook',
+  });
+  const req = { method: 'POST', body: validBody() };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(webhookResolved, true, 'handler must await postLead, not fire-and-forget it');
+  assert.equal(res.statusCode, 200);
 });
 
 test('includes type "premium_lead" and passes through the diagnosis id when posting to sheets webhook', async () => {

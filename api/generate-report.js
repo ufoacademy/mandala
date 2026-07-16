@@ -35,23 +35,29 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
     }
 
     if (sheetsWebhookUrl) {
+      // Awaited (not fire-and-forget): an un-awaited fetch here previously got cut off when
+      // the serverless invocation ended, silently dropping the sheet write. Still best-effort —
+      // a webhook failure is caught and logged, not surfaced to the client or allowed to block
+      // report generation below.
       const weakAreas = Array.isArray(areaScores) ? getWeakestAreas(areaScores) : [];
-      postLead(sheetsWebhookUrl, {
-        type: 'premium_lead',
-        id: id || '',
-        name: lead.name,
-        age: lead.age,
-        gender: lead.gender,
-        contact: lead.contact,
-        email: lead.email,
-        timestamp: new Date().toISOString(),
-        totalScore: totalScore ?? null,
-        weakArea1: weakAreas[0] || '',
-        weakArea2: weakAreas[1] || '',
-        weakArea3: weakAreas[2] || '',
-      }).catch((err) => {
+      try {
+        await postLead(sheetsWebhookUrl, {
+          type: 'premium_lead',
+          id: id || '',
+          name: lead.name,
+          age: lead.age,
+          gender: lead.gender,
+          contact: lead.contact,
+          email: lead.email,
+          timestamp: new Date().toISOString(),
+          totalScore: totalScore ?? null,
+          weakArea1: weakAreas[0] || '',
+          weakArea2: weakAreas[1] || '',
+          weakArea3: weakAreas[2] || '',
+        });
+      } catch (err) {
         console.error('lead webhook failed', err);
-      });
+      }
     }
 
     try {

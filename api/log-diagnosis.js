@@ -14,16 +14,21 @@ function createHandler({ postLead, sheetsWebhookUrl }) {
     }
 
     if (sheetsWebhookUrl) {
-      postLead(sheetsWebhookUrl, {
-        type: 'diagnosis',
-        id: id || '',
-        timestamp: new Date().toISOString(),
-        totalScore: totalScore ?? null,
-        areaScores,
-        lowScoreItems: Array.isArray(lowScoreItems) ? lowScoreItems : [],
-      }).catch((err) => {
+      // Must be awaited: this function has no other async work to keep it alive, so an
+      // un-awaited fetch can get cut off when the serverless invocation ends right after
+      // the response is sent (verified in production — logged success, no sheet row).
+      try {
+        await postLead(sheetsWebhookUrl, {
+          type: 'diagnosis',
+          id: id || '',
+          timestamp: new Date().toISOString(),
+          totalScore: totalScore ?? null,
+          areaScores,
+          lowScoreItems: Array.isArray(lowScoreItems) ? lowScoreItems : [],
+        });
+      } catch (err) {
         console.error('diagnosis log webhook failed', err);
-      });
+      }
     }
 
     res.status(200).json({ ok: true });
