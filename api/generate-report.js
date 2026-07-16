@@ -56,13 +56,17 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
 
     try {
       const client = createAnthropicClient();
-      const response = await client.messages.create({
+      // max_tokens is large enough that the SDK requires streaming (it refuses non-streaming
+      // calls it estimates could run past 10 minutes) — stream() avoids that guard, then
+      // finalMessage() gives us back the fully assembled response same as create() would.
+      const stream = client.messages.stream({
         model: 'claude-sonnet-5',
         max_tokens: 32000,
         system: prompt.system,
         messages: prompt.messages,
         output_config: { format: { type: 'json_schema', schema: REPORT_SCHEMA } },
       });
+      const response = await stream.finalMessage();
       const textBlock = response.content.find((b) => b.type === 'text');
       const report = JSON.parse(textBlock.text);
       // Claude's structured output (json_schema) doesn't support minItems/maxItems on arrays,
@@ -103,3 +107,5 @@ const defaultHandler = createHandler({
 
 module.exports = defaultHandler;
 module.exports.createHandler = createHandler;
+// Large max_tokens can push real generations past Vercel's default function duration.
+module.exports.config = { maxDuration: 120 };

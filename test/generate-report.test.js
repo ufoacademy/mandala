@@ -60,7 +60,7 @@ test('rejects request with filled honeypot as 400 without calling Claude', async
   let claudeCalled = false;
   const handler = createHandler({
     createAnthropicClient: () => ({
-      messages: { create: async () => { claudeCalled = true; throw new Error('should not be called'); } },
+      messages: { stream: () => { claudeCalled = true; throw new Error('should not be called'); } },
     }),
     postLead: async () => {},
     sheetsWebhookUrl: null,
@@ -111,7 +111,7 @@ test('returns generated report JSON on success', async () => {
   const handler = createHandler({
     createAnthropicClient: () => ({
       messages: {
-        create: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }),
+        stream: () => ({ finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) }),
       },
     }),
     postLead: async () => {},
@@ -133,9 +133,9 @@ test('requests enough max_tokens headroom for thinking + full report (regression
   const handler = createHandler({
     createAnthropicClient: () => ({
       messages: {
-        create: async (params) => {
+        stream: (params) => {
           capturedParams = params;
-          return { content: [{ type: 'text', text: JSON.stringify(fakeReport) }] };
+          return { finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) };
         },
       },
     }),
@@ -167,7 +167,7 @@ test('clamps coreInsights, pairedSections, messagingExamples to their max counts
   };
   const handler = createHandler({
     createAnthropicClient: () => ({
-      messages: { create: async () => ({ content: [{ type: 'text', text: JSON.stringify(oversizedReport) }] }) },
+      messages: { stream: () => ({ finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(oversizedReport) }] }) }) },
     }),
     postLead: async () => {},
     sheetsWebhookUrl: null,
@@ -192,7 +192,7 @@ test('posts lead to sheets webhook when configured (best-effort, does not block 
   };
   const handler = createHandler({
     createAnthropicClient: () => ({
-      messages: { create: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) },
+      messages: { stream: () => ({ finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) }) },
     }),
     postLead: async (url, payload) => {
       postedPayload = payload;
@@ -222,7 +222,7 @@ test('includes type "premium_lead" and passes through the diagnosis id when post
   };
   const handler = createHandler({
     createAnthropicClient: () => ({
-      messages: { create: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) },
+      messages: { stream: () => ({ finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) }) },
     }),
     postLead: async (url, payload) => {
       postedPayload = payload;
@@ -246,9 +246,9 @@ test('passes lowScoreItems through to buildPrompt without breaking report genera
   const handler = createHandler({
     createAnthropicClient: () => ({
       messages: {
-        create: async (params) => {
+        stream: (params) => {
           capturedMessages = params.messages;
-          return { content: [{ type: 'text', text: JSON.stringify(fakeReport) }] };
+          return { finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) };
         },
       },
     }),
@@ -268,7 +268,7 @@ test('passes lowScoreItems through to buildPrompt without breaking report genera
 test('returns 502 when Claude call fails', async () => {
   const handler = createHandler({
     createAnthropicClient: () => ({
-      messages: { create: async () => { throw new Error('network error'); } },
+      messages: { stream: () => ({ finalMessage: async () => { throw new Error('network error'); } }) },
     }),
     postLead: async () => {},
     sheetsWebhookUrl: null,
