@@ -13,7 +13,7 @@
   --highlight-bg:#FBF3E3; --highlight-border:#D97706;
 }
 @page { size: A4; margin: 12mm; }
-* { margin:0; padding:0; box-sizing:border-box; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 body { font-family:'Noto Sans KR',sans-serif; color:var(--ink); background:var(--bg); }
 .toolbar { position:sticky; top:0; background:var(--navy); color:#fff; padding:14px 20px; display:flex; justify-content:space-between; align-items:center; z-index:10; }
 .toolbar span { font-weight:700; font-size:14px; }
