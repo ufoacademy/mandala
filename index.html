@@ -2698,7 +2698,7 @@ function logDiagnosisToSheet(areaScores,totalScore){
 
 function collectCheckupSummaryForReport(){
   return Object.entries(checkupData).map(([key,data])=>({
-    key, name:data.bm.name, value:data.value, unit:data.bm.unit||'', status:data.status, supp:data.bm.supp||''
+    key, name:data.bm.name, value:data.value, unit:data.bm.unit||'', status:data.status, supp:data.bm.supp||'', mech:data.bm.mech||''
   }));
 }
 
@@ -2710,19 +2710,24 @@ function collectTargetTableForReport(){
     const entry=checkupData[key];
     if(!entry) return;
     const note=(entry.bm.habit||'').split(',')[0]||'';
-    rows.push({key,name,current:entry.value,unit,target,note});
+    rows.push({key,name,current:entry.value,unit,target,note,status:entry.status});
   };
   pushRow('bmi','체질량지수(BMI)','kg/m²','23 미만');
   pushRow('waist','허리둘레','cm', gender()==='f' ? '80cm 미만' : '85cm 미만');
   const sbpEntry=checkupData['sbp'], dbpEntry=checkupData['dbp'];
   if(sbpEntry && dbpEntry){
     const note=(sbpEntry.bm.habit||'').split(',')[0]||'';
-    rows.push({key:'bp',name:'혈압',current:`${sbpEntry.value}/${dbpEntry.value}`,unit:'mmHg',target:'120/80 미만',note});
+    const rank={ok:0,gz:1,wn:2};
+    const bpStatus=rank[sbpEntry.status]>=rank[dbpEntry.status]?sbpEntry.status:dbpEntry.status;
+    rows.push({key:'bp',name:'혈압',current:`${sbpEntry.value}/${dbpEntry.value}`,unit:'mmHg',target:'120/80 미만',note,status:bpStatus});
   }
   pushRow('fbg','공복혈당','mg/dL','100 미만');
   pushRow('hba1c','당화혈색소(HbA1c)','%','5.7 미만');
   pushRow('tg','중성지방','mg/dL','150 미만');
   pushRow('vitd','비타민 D','ng/mL','30 이상');
+  pushRow('ldl','LDL 콜레스테롤','mg/dL','130 미만');
+  pushRow('crp','hs-CRP','mg/L','1.0 미만');
+  pushRow('uric','요산','mg/dL', gender()==='f' ? '5.0 미만' : '6.0 미만');
   return rows;
 }
 

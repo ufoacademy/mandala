@@ -184,6 +184,32 @@ test('clamps coreInsights, pairedSections, messagingExamples to their max counts
   assert.deepEqual(res.body.report.messagingExamples, ['m1', 'm2', 'm3', 'm4']);
 });
 
+test('clamps grayZoneInsights to 10 items when Claude overshoots', async () => {
+  const oversizedReport = {
+    greeting: '안녕하세요',
+    coreInsights: ['a', 'b', 'c', 'd'],
+    areaInterpretations: [],
+    pairedSections: [],
+    priorityExplanation: 'x',
+    roadmap12Week: [],
+    grayZoneInsights: Array.from({ length: 12 }, (_, i) => ({ name: `항목${i + 1}`, mechanism: 'x' })),
+    finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: { stream: () => ({ finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(oversizedReport) }] }) }) },
+    }),
+    postLead: async () => {},
+    sheetsWebhookUrl: null,
+  });
+  const req = { method: 'POST', body: validBody() };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(res.body.report.grayZoneInsights.length, 10);
+  assert.equal(res.body.report.grayZoneInsights[9].name, '항목10');
+});
+
 test('posts lead to sheets webhook when configured (best-effort: awaited, failures do not block the response)', async () => {
   let postedPayload = null;
   const fakeReport = {

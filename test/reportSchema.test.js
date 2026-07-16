@@ -15,6 +15,7 @@ test('schema requires all top-level report fields', () => {
     'priorityExplanation',
     'nutritionPlan',
     'hopeMessage',
+    'grayZoneInsights',
     'roadmap12Week',
     'messagingExamples',
     'finalConclusion',
@@ -23,6 +24,15 @@ test('schema requires all top-level report fields', () => {
     assert.ok(REPORT_SCHEMA.required.includes(field), `missing required field: ${field}`);
     assert.ok(REPORT_SCHEMA.properties[field], `missing property definition: ${field}`);
   }
+});
+
+test('grayZoneInsights is an array of {name, mechanism} objects with no length constraints', () => {
+  const gzi = REPORT_SCHEMA.properties.grayZoneInsights;
+  assert.equal(gzi.type, 'array');
+  assert.equal(gzi.minItems, undefined);
+  assert.equal(gzi.maxItems, undefined);
+  assert.deepEqual(gzi.items.required.sort(), ['mechanism', 'name'].sort());
+  assert.equal(gzi.items.additionalProperties, false);
 });
 
 test('nutritionPlan requires summary and recommendations with evidenceSource per item', () => {

@@ -89,6 +89,9 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
       if (Array.isArray(report.messagingExamples)) {
         report.messagingExamples = report.messagingExamples.slice(0, 4);
       }
+      if (Array.isArray(report.grayZoneInsights)) {
+        report.grayZoneInsights = report.grayZoneInsights.slice(0, 10);
+      }
       res.status(200).json({ report });
     } catch (err) {
       console.error('claude request failed', err);

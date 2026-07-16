@@ -67,6 +67,25 @@ test('includes nutrition hint (supp) in checkup lines when present', () => {
   assert.match(result.messages[0].content, /베르베린/);
 });
 
+test('includes mechanism hint (mech) in checkup lines when present', () => {
+  const result = buildPrompt({
+    name: '홍길동',
+    areaScores: makeAreaScores(),
+    checkupSummary: [{ key: 'tg', name: '중성지방', value: 186, unit: 'mg/dL', status: 'wn', mech: '과당·정제탄수화물·알코올→간 VLDL 합성↑→TG↑' }],
+    totalScore: 160,
+  });
+  assert.match(result.messages[0].content, /기전/);
+  assert.match(result.messages[0].content, /VLDL 합성/);
+});
+
+test('system prompt instructs grayZoneInsights to cover only gz\\/wn items with mechanism-to-habit sentences', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /grayZoneInsights/);
+  assert.match(result.system, /"gz"/);
+  assert.match(result.system, /"wn"/);
+  assert.match(result.system, /mechanism/);
+});
+
 test('system prompt instructs not to invent numbers', () => {
   const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
   assert.match(result.system, /숫자/);
