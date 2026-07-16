@@ -2306,7 +2306,6 @@ function buildCheckupResult(){
 
   const warnItems=Object.entries(checkupData).filter(([,d])=>d.status==='wn');
   const gzItems=Object.entries(checkupData).filter(([,d])=>d.status==='gz');
-  const okItems=Object.entries(checkupData).filter(([,d])=>d.status==='ok');
   const total=Object.keys(checkupData).length;
 
   if(warnItems.length>0||gzItems.length>0){
@@ -2317,9 +2316,15 @@ function buildCheckupResult(){
       질병으로 확정된 것이 아니라 지금 생활습관을 개선해야 한다는 몸의 신호입니다.<br>
       건강습관이 어떻게 이 수치를 만들었는지 아래 연결 설계에서 확인하세요.</p>`;
     body.appendChild(gz);
+  } else {
+    const ok=document.createElement('div');
+    ok.className='gz-summary';
+    ok.innerHTML=`<h4>✅ 회색지대 없음</h4><p>입력하신 ${total}개 지표가 모두 정상 범위입니다.</p>`;
+    body.appendChild(ok);
   }
 
-  [...warnItems,...gzItems,...okItems].forEach(([key,data])=>{
+  // 이 섹션은 "회색지대(주의·경계)"만 보여준다 — 정상 지표는 카드로 나열하지 않는다.
+  [...warnItems,...gzItems].forEach(([key,data])=>{
     const bm=data.bm;
     const stClass={ok:'bm-ok',gz:'bm-gz',wn:'bm-wn'}[data.status];
     const stLabel={ok:'✅ 정상',gz:'△ 경계·회색지대',wn:'🚨 주의'}[data.status];

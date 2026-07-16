@@ -124,7 +124,7 @@ test('returns generated report JSON on success', async () => {
   assert.deepEqual(res.body.report, fakeReport);
 });
 
-test('requests enough max_tokens headroom for thinking + full report (regression: 8000 truncated real responses)', async () => {
+test('requests enough max_tokens headroom for thinking + full report (regression: 8000 and 16000 both truncated real responses as the schema/prompt grew)', async () => {
   const fakeReport = {
     greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
     priorityExplanation: 'x', roadmap12Week: [], finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
@@ -145,7 +145,7 @@ test('requests enough max_tokens headroom for thinking + full report (regression
   const req = { method: 'POST', body: validBody() };
   const res = mockRes();
   await handler(req, res);
-  assert.ok(capturedParams.max_tokens >= 16000, `max_tokens too low: ${capturedParams.max_tokens}`);
+  assert.ok(capturedParams.max_tokens >= 32000, `max_tokens too low: ${capturedParams.max_tokens}`);
 });
 
 test('clamps coreInsights, pairedSections, messagingExamples to their max counts when Claude overshoots (schema cannot enforce minItems/maxItems)', async () => {
