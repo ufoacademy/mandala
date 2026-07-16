@@ -56,14 +56,14 @@ body { font-family:'Noto Sans KR',sans-serif; color:var(--ink); background:var(-
 .positioning-box p { font-size:11px; line-height:1.7; color:#5C3D07; }
 
 /* 대시보드 */
-.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:18px; }
-.stat-card { background:var(--bg); border-radius:8px; padding:12px 14px; }
-.stat-card .label { font-size:10.5px; color:var(--ink-light); margin-bottom:3px; }
-.stat-card .value { font-size:19px; font-weight:900; color:var(--navy); }
-.stat-card .interp { font-size:10.5px; color:var(--ink-mid); margin-top:2px; }
-.summary-table { width:100%; border-collapse:collapse; font-size:11.5px; }
-.summary-table th { background:var(--bg); text-align:left; padding:8px 10px; color:var(--ink-mid); font-weight:700; }
-.summary-table td { padding:8px 10px; border-bottom:1px solid var(--border); }
+.stat-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
+.stat-card { background:var(--bg); border-radius:8px; padding:8px 10px; }
+.stat-card .label { font-size:9px; color:var(--ink-light); margin-bottom:2px; }
+.stat-card .value { font-size:15px; font-weight:900; color:var(--navy); }
+.stat-card .interp { font-size:9px; color:var(--ink-mid); margin-top:1px; }
+.summary-table { width:100%; border-collapse:collapse; font-size:10px; }
+.summary-table th { background:var(--bg); text-align:left; padding:5px 8px; color:var(--ink-mid); font-weight:700; }
+.summary-table td { padding:5px 8px; border-bottom:1px solid var(--border); }
 
 /* 8영역 맵 */
 .radar-wrap { display:flex; justify-content:center; margin-bottom:10px; }
@@ -214,8 +214,8 @@ const MEMO_HTML = `
       <div class="memo-lines"></div>
     </div>`;
 
-function wrapPage(chapterIndex, pageNumber, title, subtitle, bodyHtml) {
-  const memoHtml = pageNumber >= 3 ? MEMO_HTML : '';
+function wrapPage(chapterIndex, pageNumber, title, subtitle, bodyHtml, noMemo) {
+  const memoHtml = (!noMemo && pageNumber >= 3) ? MEMO_HTML : '';
   return `
   <section class="report-page">
     <header class="page-header">
@@ -274,13 +274,13 @@ function renderDashboardPage(data, chapterIndex, pageNumber) {
   const byKey = {};
   (checkupSummary || []).forEach((c) => { byKey[c.key] = c; });
 
+  // 대사증후군 진단기준 5가지만 표시: 허리둘레·혈압·공복혈당·중성지방·HDL콜레스테롤
   const statDefs = [];
-  if (byKey.bmi) statDefs.push({ label: 'BMI', value: byKey.bmi.value, interp: byKey.bmi.status === 'ok' ? '정상' : byKey.bmi.status === 'gz' ? '과체중' : '비만' });
   if (byKey.waist) statDefs.push({ label: '허리둘레', value: `${byKey.waist.value}cm`, interp: byKey.waist.status === 'ok' ? '정상' : '복부비만 경계' });
   if (byKey.sbp && byKey.dbp) statDefs.push({ label: '혈압', value: `${byKey.sbp.value}/${byKey.dbp.value}`, interp: byKey.sbp.status === 'ok' ? '정상' : '높은 편' });
   if (byKey.fbg) statDefs.push({ label: '공복혈당', value: byKey.fbg.value, interp: byKey.fbg.status === 'ok' ? '정상' : byKey.fbg.status === 'gz' ? '경계' : '주의' });
-  if (byKey.hba1c) statDefs.push({ label: 'HbA1c', value: `${byKey.hba1c.value}%`, interp: byKey.hba1c.status === 'ok' ? '정상' : '당대사 경계' });
   if (byKey.tg) statDefs.push({ label: '중성지방', value: byKey.tg.value, interp: byKey.tg.status === 'ok' ? '정상' : '높음' });
+  if (byKey.hdl) statDefs.push({ label: 'HDL 콜레스테롤', value: byKey.hdl.value, interp: byKey.hdl.status === 'ok' ? '정상' : '낮음' });
 
   const statCards = statDefs
     .map((s) => `<div class="stat-card"><div class="label">${escapeHtml(s.label)}</div><div class="value">${escapeHtml(s.value)}</div><div class="interp">${escapeHtml(s.interp)}</div></div>`)
@@ -292,7 +292,7 @@ function renderDashboardPage(data, chapterIndex, pageNumber) {
 
   const body = `
     <div class="stat-grid">${statCards}</div>
-    <h3 style="font-size:13px;color:var(--navy);margin-bottom:10px;">검진 수치 요약표</h3>
+    <h3 style="font-size:11.5px;color:var(--navy);margin-bottom:6px;">검진 수치 요약표</h3>
     <table class="summary-table">
       <thead><tr><th>항목</th><th>결과</th><th>해석</th></tr></thead>
       <tbody>${rows}</tbody>
@@ -325,7 +325,9 @@ function renderAreaMapPage(data, chapterIndex, pageNumber) {
     <div class="area-grid">${areaGrid}</div>
     <ul class="area-interp-list">${areaInterpretations}</ul>`;
 
-  return wrapPage(chapterIndex, pageNumber, '건강만다라 8영역 맵', '전체 구조와 점수 해석', body);
+  // noMemo: 이 페이지는 레이더+막대+8개 해석까지 이미 내용이 많아, 메모 블럭을 넣으면
+  // 한 페이지를 넘기기 쉬워서 다른 페이지와 달리 메모 블럭을 뺀다.
+  return wrapPage(chapterIndex, pageNumber, '건강만다라 8영역 맵', '전체 구조와 점수 해석', body, true);
 }
 
 function renderPairPage(pair, meta, chapterIndex, pageNumber) {
