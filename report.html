@@ -28,7 +28,7 @@ body { font-family:'Noto Sans KR',sans-serif; color:var(--ink); background:var(-
 .page-number { font-size:12px; font-weight:700; color:rgba(255,255,255,.55); flex-shrink:0; }
 .gold-rule { height:3px; background:linear-gradient(90deg,var(--gold),rgba(201,162,39,.15)); margin-top:12px; }
 .page-body { padding:20px 26px 16px; }
-.page-footer { font-size:9.5px; color:var(--ink-light); text-align:center; padding:10px 20px 16px; border-top:1px solid var(--border); margin-top:auto; }
+.page-footer { font-size:9.5px; color:var(--ink-light); text-align:center; padding:10px 20px 16px; border-top:1px solid var(--border); margin-top:auto; line-height:1.6; }
 .memo-block { border:1px dashed var(--border); border-radius:8px; padding:10px 14px; margin-top:18px; }
 .memo-block .memo-label { font-size:10px; color:var(--ink-light); font-weight:700; letter-spacing:.03em; margin-bottom:8px; }
 .memo-block .memo-lines { height:70px; background-image:repeating-linear-gradient(to bottom, transparent, transparent 16px, var(--border) 16px, var(--border) 17px); }
@@ -210,7 +210,7 @@ const PAIR_META = [
 
 function pad2(n) { return String(n).padStart(2, '0'); }
 
-const FOOTER_HTML = '<footer class="page-footer">© 2026 건강이음센터. 본 리포트는 생활습관 코칭 참고용이며 의학적 진단을 대체하지 않습니다. (저작권등록번호 C-2026-026168) · 기업·기관 사용 문의: ufoacademy@naver.com</footer>';
+const FOOTER_HTML = '<footer class="page-footer"><div>© 2026 건강이음센터. 본 리포트는 생활습관 코칭 참고용이며 의학적 진단을 대체하지 않습니다. (저작권등록번호 C-2026-026168)</div><div>기업·기관 사용 문의 : ufoacademy@naver.com</div></footer>';
 
 const MEMO_HTML = `
     <div class="memo-block">
