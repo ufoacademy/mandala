@@ -108,4 +108,5 @@ const defaultHandler = createHandler({
 module.exports = defaultHandler;
 module.exports.createHandler = createHandler;
 // Large max_tokens can push real generations past Vercel's default function duration.
-module.exports.config = { maxDuration: 120 };
+// Observed a real generation take 117s against a 120s cap — too little margin, raised to 300s.
+module.exports.config = { maxDuration: 300 };
