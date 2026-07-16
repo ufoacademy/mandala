@@ -2778,6 +2778,25 @@ async function submitPremiumLead(){
   loadingOverlay.classList.add('show');
   const msgInterval=setInterval(setPremiumLoadingMsg,7000);
 
+  // 생성 대기(60~120초) 중 화면이 꺼지면 모바일 브라우저가 탭을 백그라운드로 넘겨
+  // 요청이 멈춘 것처럼 보이는 경우가 있어, 지원되는 기기에서는 화면 잠금을 막아둔다.
+  // 미지원 브라우저/권한 거부 시 조용히 무시 — 리포트 생성 자체엔 영향 없음.
+  let wakeLock=null;
+  async function requestWakeLock(){
+    try{
+      if('wakeLock' in navigator){
+        wakeLock=await navigator.wakeLock.request('screen');
+      }
+    }catch(e){/* 무시: 화면 잠금 방지는 best-effort */}
+  }
+  function handleVisibilityChange(){
+    if(wakeLock!==null && document.visibilityState==='visible'){
+      requestWakeLock();
+    }
+  }
+  await requestWakeLock();
+  document.addEventListener('visibilitychange',handleVisibilityChange);
+
   try{
     const resp=await fetch('/api/generate-report',{
       method:'POST',
@@ -2796,6 +2815,8 @@ async function submitPremiumLead(){
     errEl.textContent='리포트 생성에 실패했습니다. 잠시 후 다시 시도해주세요.';
     errEl.style.display='block';
   }finally{
+    document.removeEventListener('visibilitychange',handleVisibilityChange);
+    if(wakeLock){wakeLock.release().catch(()=>{});wakeLock=null;}
     clearInterval(msgInterval);
     loadingOverlay.classList.remove('show');
     loadingTitle.textContent='결과를 분석하고 있습니다...';
