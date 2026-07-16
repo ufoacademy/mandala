@@ -15,6 +15,7 @@ test('schema requires all top-level report fields', () => {
     'priorityExplanation',
     'nutritionPlan',
     'hopeMessage',
+    'ageGroupInsight',
     'grayZoneInsights',
     'roadmap12Week',
     'messagingExamples',
@@ -33,6 +34,13 @@ test('grayZoneInsights is an array of {name, mechanism} objects with no length c
   assert.equal(gzi.maxItems, undefined);
   assert.deepEqual(gzi.items.required.sort(), ['mechanism', 'name'].sort());
   assert.equal(gzi.items.additionalProperties, false);
+});
+
+test('ageGroupInsight requires diseaseName and motivationalSentence', () => {
+  const agi = REPORT_SCHEMA.properties.ageGroupInsight;
+  assert.equal(agi.type, 'object');
+  assert.deepEqual(agi.required.sort(), ['diseaseName', 'motivationalSentence'].sort());
+  assert.equal(agi.additionalProperties, false);
 });
 
 test('nutritionPlan requires summary and recommendations with evidenceSource per item', () => {

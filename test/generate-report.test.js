@@ -314,6 +314,70 @@ test('passes lowScoreItems through to buildPrompt without breaking report genera
   assert.match(capturedMessages[0].content, /나는 채소 반찬이나 쌈과 함께 식사한다\./);
 });
 
+test('fetches HIRA age-group stats, filters to chronic diseases, and passes the top one to buildPrompt', async () => {
+  const fakeReport = {
+    greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
+    priorityExplanation: 'x', roadmap12Week: [], finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  let capturedMessages = null;
+  let capturedFetchArgs = null;
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: {
+        stream: (params) => {
+          capturedMessages = params.messages;
+          return { finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) };
+        },
+      },
+    }),
+    postLead: async () => {},
+    sheetsWebhookUrl: null,
+    fetchAgeGroupStats: async (args) => {
+      capturedFetchArgs = args;
+      return [
+        { name: '급성 비인두염(감기)', code: 'J00', count: 900 },
+        { name: '본태성(원발성) 고혈압', code: 'I10', count: 400 },
+      ];
+    },
+    hiraApiKey: 'fake-key',
+  });
+  const req = { method: 'POST', body: validBody({ age: '52', gender: 'f' }) };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.equal(capturedFetchArgs.age, '52');
+  assert.equal(capturedFetchArgs.gender, 'f');
+  assert.equal(capturedFetchArgs.apiKey, 'fake-key');
+  assert.match(capturedMessages[0].content, /연령대 만성질환 통계/);
+  assert.match(capturedMessages[0].content, /본태성\(원발성\) 고혈압/);
+  assert.doesNotMatch(capturedMessages[0].content, /급성 비인두염/);
+});
+
+test('omits age-group section when fetchAgeGroupStats is not injected (existing tests without HIRA wiring keep working)', async () => {
+  const fakeReport = {
+    greeting: 'g', coreInsights: ['a', 'b', 'c', 'd'], areaInterpretations: [], pairedSections: [],
+    priorityExplanation: 'x', roadmap12Week: [], finalConclusion: { oneLineSummary: 's', whyStrong: 'w', finalProposal: 'f' },
+  };
+  let capturedMessages = null;
+  const handler = createHandler({
+    createAnthropicClient: () => ({
+      messages: {
+        stream: (params) => {
+          capturedMessages = params.messages;
+          return { finalMessage: async () => ({ content: [{ type: 'text', text: JSON.stringify(fakeReport) }] }) };
+        },
+      },
+    }),
+    postLead: async () => {},
+    sheetsWebhookUrl: null,
+  });
+  const req = { method: 'POST', body: validBody() };
+  const res = mockRes();
+  await handler(req, res);
+  assert.equal(res.statusCode, 200);
+  assert.doesNotMatch(capturedMessages[0].content, /연령대 만성질환 통계/);
+});
+
 test('returns 502 when Claude call fails', async () => {
   const handler = createHandler({
     createAnthropicClient: () => ({

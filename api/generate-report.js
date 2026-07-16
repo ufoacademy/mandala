@@ -2,6 +2,7 @@ const Anthropic = require('@anthropic-ai/sdk');
 const { validateLead } = require('../lib/validateLead');
 const { buildPrompt } = require('../lib/buildPrompt');
 const { REPORT_SCHEMA } = require('../lib/reportSchema');
+const { fetchAgeGroupDiseaseStats, filterChronicDiseases } = require('../lib/hiraAgeGroupStats');
 
 function getWeakestAreas(areaScores, count = 3) {
   return [...areaScores]
@@ -10,7 +11,7 @@ function getWeakestAreas(areaScores, count = 3) {
     .map((a) => `${a.name} ${a.pctVal}%`);
 }
 
-function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
+function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl, fetchAgeGroupStats, hiraApiKey }) {
   return async function handler(req, res) {
     if (req.method !== 'POST') {
       res.status(405).json({ error: 'method_not_allowed' });
@@ -26,9 +27,22 @@ function createHandler({ createAnthropicClient, postLead, sheetsWebhookUrl }) {
       return;
     }
 
+    // Best-effort, never blocks report generation: HIRA_API_KEY may not be configured yet,
+    // and the call itself is currently a stub (see lib/hiraAgeGroupStats.js) pending the
+    // real endpoint details from data.go.kr — both cases resolve to null here.
+    const getAgeGroupStats = fetchAgeGroupStats || (async () => null);
+    let ageGroupDisease = null;
+    try {
+      const raw = await getAgeGroupStats({ age: lead.age, gender: lead.gender, apiKey: hiraApiKey });
+      const topChronic = filterChronicDiseases(raw)[0];
+      if (topChronic) ageGroupDisease = { name: topChronic.name };
+    } catch (err) {
+      console.error('HIRA age-group disease stats fetch failed', err);
+    }
+
     let prompt;
     try {
-      prompt = buildPrompt({ name: lead.name, areaScores, checkupSummary, totalScore, lowScoreItems });
+      prompt = buildPrompt({ name: lead.name, areaScores, checkupSummary, totalScore, lowScoreItems, ageGroupDisease });
     } catch (err) {
       res.status(400).json({ error: 'invalid_scores', message: err.message });
       return;
@@ -112,6 +126,8 @@ const defaultHandler = createHandler({
   createAnthropicClient: () => new Anthropic(),
   postLead: realPostLead,
   sheetsWebhookUrl: process.env.SHEETS_WEBHOOK_URL,
+  fetchAgeGroupStats: fetchAgeGroupDiseaseStats,
+  hiraApiKey: process.env.HIRA_API_KEY,
 });
 
 module.exports = defaultHandler;

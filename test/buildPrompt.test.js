@@ -176,3 +176,26 @@ test('system prompt instructs using lowScoreItems for nutritionPlan and highligh
   assert.match(result.system, /1점 응답 문항 목록/);
   assert.match(result.system, /highlightContent/);
 });
+
+test('omits [연령대 만성질환 통계] section when ageGroupDisease is not provided', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.doesNotMatch(result.messages[0].content, /연령대 만성질환 통계/);
+});
+
+test('includes [연령대 만성질환 통계] section with the disease name when ageGroupDisease is provided', () => {
+  const result = buildPrompt({
+    name: '홍길동',
+    areaScores: makeAreaScores(),
+    totalScore: 160,
+    ageGroupDisease: { name: '본태성(원발성) 고혈압' },
+  });
+  assert.match(result.messages[0].content, /연령대 만성질환 통계/);
+  assert.match(result.messages[0].content, /본태성\(원발성\) 고혈압/);
+});
+
+test('system prompt instructs ageGroupInsight to use empty strings when no age-group data is provided', () => {
+  const result = buildPrompt({ name: '홍길동', areaScores: makeAreaScores(), totalScore: 160 });
+  assert.match(result.system, /ageGroupInsight/);
+  assert.match(result.system, /diseaseName/);
+  assert.match(result.system, /빈 문자열/);
+});
